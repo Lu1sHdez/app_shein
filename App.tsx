@@ -1,7 +1,6 @@
 import "./global.css";
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, ActivityIndicator, Text } from 'react-native';
 import fuente from './styles/fuente';
@@ -15,9 +14,11 @@ import Clientes from './app/clients/Clientes';
 import Ventas from "./app/ventas/Ventas"
 import {PedidosProvider } from "./app/context/PedidosContext"
 import Reportes from "./app/reportes/Reportes"
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import Perfil from './app/perfil/Perfil';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 // Componente de carga
 function LoadingScreen() {
@@ -63,6 +64,7 @@ export default function App() {
   }
 
   return (
+    
     <PedidosProvider>
       <AlertProvider>
         <NavigationContainer>
