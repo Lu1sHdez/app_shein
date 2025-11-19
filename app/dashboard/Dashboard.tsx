@@ -2,32 +2,44 @@ import { View, TouchableOpacity } from "react-native";
 import Text from "../../components/Text";
 import Layout from "../../components/Layout";
 import { Ionicons } from "@expo/vector-icons";
+import Estados from "./components/Estados";
+import ActividadReciente from "./components/ActividadReciente";
+import AccionesRapidas from "./components/AccionesRapidas";
 
 export default function Dashboard({ toggleDrawer }: any) {
   return (
     <Layout>
-      <View className="flex-1 bg-white px-6 pt-16">
+      <View className="flex-1 bg-white px-6 pt-14 pb-4">
 
         {/* HEADER */}
-        <View className="flex-row justify-between items-center mb-10">
-          <Text className="text-3xl font-medium text-textPrimary">
-            Panel+
-          </Text>
-
-          {/* BOTÓN MENÚ HAMBURGUESA */}
+        <View className="flex-row items-center justify-between mb-6">
+          
+          {/* Botón menú */}
           <TouchableOpacity
             onPress={toggleDrawer}
-            className="p-2 rounded-full bg-gray-100 active:bg-gray-200"
+            className="p-2 rounded-full bg-grayLight active:bg-graySoft shadow-sm"
           >
-            <Ionicons name="menu" size={32} color="#333" />
+            <Ionicons name="menu" size={26} color="#333" />
           </TouchableOpacity>
+
+          <Text className="text-3xl font-bold text-textPrimary">
+            Inicio
+          </Text>
+
+          {/* Ícono de placeholder para balancear */}
+          <View className="w-8" />
         </View>
 
-        {/* CONTENIDO */}
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-xl text-textSecondary">
-            Bienvenido a tu panel
-          </Text>
+        {/* SECCIONES */}
+        <View 
+          className="flex-1"
+          style={{
+            gap: 20,
+          }}
+        >
+          <Estados />
+
+          <ActividadReciente />
         </View>
 
       </View>

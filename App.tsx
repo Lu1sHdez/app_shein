@@ -6,8 +6,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Inicio from "./app/bienvenido/Inicio";
 import Login from "./app/auth/Login";
-import Dashboard from "./app/dashboard/Dashboard";
+import NuevoPedido from "./app/pedidos/Pedidos";
 import AuthLoading from "./app/auth/AuthLoading";
+import Perfil from "./app/perfil/Perfil";
 import DrawerDashboard from "./app/dashboard/DrawerDashboard";
 
 import { usePoppinsFonts } from "./hooks/fuente";
@@ -38,6 +39,9 @@ export default function App() {
           {/* Si no hay sesión, estas pantallas estarán disponibles */}
           <Stack.Screen name="Inicio" component={Inicio} />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Perfil" component={Perfil} />
+          <Stack.Screen name="NuevoPedido" component={NuevoPedido} />
+
 
           {/* Si hay sesión, se envía a Dashboard */}
           <Stack.Screen name="Dashboard" component={DrawerDashboard} />
