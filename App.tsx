@@ -1,54 +1,129 @@
 import "./global.css";
-import { StatusBar } from "expo-status-bar";
-import { View, ActivityIndicator } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, ActivityIndicator, Text } from 'react-native';
+import fuente from './styles/fuente';
+import Inicio from './app/inicio';
+import Login from './app/auth/login';
+import DrawerDashboard from './app/home/screens/DrawerDashboard';
+import RegistrarPedido from './app/pedidos/RegistrarPedido';
+import { AlertProvider } from './app/context/AlertContext';
+import Estados from './app/pedidos/estados/Estados';
+import Clientes from './app/clients/Clientes';
+import Ventas from "./app/ventas/Ventas"
+import {PedidosProvider } from "./app/context/PedidosContext"
+import Reportes from "./app/reportes/Reportes"
+import Perfil from './app/perfil/Perfil';
 
-import Inicio from "./app/bienvenido/Inicio";
-import Login from "./app/auth/Login";
-import NuevoPedido from "./app/pedidos/Pedidos";
-import AuthLoading from "./app/auth/AuthLoading";
-import Perfil from "./app/perfil/Perfil";
-import DrawerDashboard from "./app/dashboard/DrawerDashboard";
+const Stack = createStackNavigator();
 
-import { usePoppinsFonts } from "./hooks/fuente";
-
-const Stack = createNativeStackNavigator();
+// Componente de carga
+function LoadingScreen() {
+  return (
+    <View className="flex-1 bg-white justify-center items-center">
+      <ActivityIndicator size="large" color="#4F4F4F" />
+      <Text className="mt-4 text-lg text-gray-600">Verificando sesión...</Text>
+    </View>
+  );
+}
 
 export default function App() {
-  const fontsLoaded = usePoppinsFonts();
+  const fontsLoaded = fuente();
+  const [initialRoute, setInitialRoute] = useState<'Inicio' | 'Login' | 'Dashboard'>('Inicio');
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!fontsLoaded) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (token) {
+          console.log('Token detectado, se mantiene la sesión activa');
+          setInitialRoute('Dashboard'); 
+        } else {
+          console.log('No hay token, ir al inicio');
+          setInitialRoute('Inicio'); 
+        }
+      } catch (error) {
+        console.error('Error al verificar la sesión:', error);
+        setInitialRoute('Inicio');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  // Si las fuentes no están cargadas o estamos verificando la sesión, mostrar pantalla de carga
+  if (!fontsLoaded || isLoading) {
+    return <LoadingScreen />;
   }
 
   return (
-    <>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="AuthLoading"
-          screenOptions={{ headerShown: false }}
-        >
-          {/* PRIMERO: verifica si hay sesión */}
-          <Stack.Screen name="AuthLoading" component={AuthLoading} />
+    <PedidosProvider>
+      <AlertProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName={initialRoute}>
+            
+            <Stack.Screen
+              name="Inicio"
+              component={Inicio}
+              options={{ headerShown: false }}
+            />
 
-          {/* Si no hay sesión, estas pantallas estarán disponibles */}
-          <Stack.Screen name="Inicio" component={Inicio} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Perfil" component={Perfil} />
-          <Stack.Screen name="NuevoPedido" component={NuevoPedido} />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false}}
+            />
 
+            <Stack.Screen
+              name="Dashboard"
+              component={DrawerDashboard}
+              options={{ headerShown: false }}
+            />
 
-          {/* Si hay sesión, se envía a Dashboard */}
-          <Stack.Screen name="Dashboard" component={DrawerDashboard} />
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen
+              name="Perfil"
+              component={Perfil}
+              options={{ headerShown: false }}
+            />
 
-      <StatusBar style="auto" />
-    </>
+            <Stack.Screen
+              name="Clientes"
+              component={Clientes}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="Ventas"
+              component={Ventas}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="Reportes"
+              component={Reportes}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="RegistrarPedido"
+              component={RegistrarPedido}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="EstadoPedidos"
+              component={Estados}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AlertProvider>
+    </PedidosProvider>
   );
 }

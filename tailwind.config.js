@@ -32,6 +32,10 @@ module.exports = {
         medium: ["Poppins_500Medium"],
         bold: ["Poppins_700Bold"],
       },
+      fontSize: {
+        '4xl': '2.5rem', 
+        '5xl': '3rem',
+      },
     },
   },
 

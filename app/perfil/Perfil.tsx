@@ -1,104 +1,116 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, ActivityIndicator, ScrollView } from "react-native";
-import Text from "../../components/Text";
-import { obtenerPerfil } from "./Obtener";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, Image, ScrollView, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_URL } from "../../constants/config";
+import { colors } from "../../constants/theme";
+import { perfilStyles as styles } from "./styles/Perfil"; 
 import Layout from "../../components/Layout";
 
-export default function Perfil() {
-  const [perfil, setPerfil] = useState<any | null>(null);
+// Define la estructura de datos del perfil para TypeScript
+interface PerfilData {
+  id: number;
+  nombre_usuario: string;
+  correo: string;
+  rol: string; // Puedes usar uniones literales si conoces los roles (ej: 'administrador' | 'cliente')
+  nombre: string;
+  apellido_paterno: string;
+  apellido_materno: string;
+  telefono: string;
+  foto_perfil: string
+}
+
+const Perfil: React.FC = () => {
+  // Tipado de estados
+  const [perfil, setPerfil] = useState<PerfilData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const cargar = async () => {
-      const data = await obtenerPerfil();
-      setPerfil(data);
+    const obtenerPerfil = async () => {
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+
+        if (!token) {
+          console.warn("No se encontró el token. Inicia sesión nuevamente.");
+          setLoading(false);
+          return;
+        }
+
+        // Tipado de la respuesta de axios
+        const response = await axios.get<PerfilData>(`${API_URL}/api/app/perfil/obtener`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setPerfil(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Error al obtener perfil:", error.response?.data || error.message);
+        } else {
+          console.error("Error desconocido:", error);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
-    cargar();
+
+    obtenerPerfil();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.loadingText}>Cargando perfil...</Text>
+      </View>
+    );
+  }
 
   if (!perfil) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#2563EB" />
+      <View style={styles.loadingContainer}>
+        <Text style={styles.errorText}>No se pudo cargar el perfil.</Text>
       </View>
     );
   }
 
   return (
-    <Layout>
-    <ScrollView className="flex-1 bg-white px-6 py-10">
+    <Layout title="Mi perfil" showBack>
+      <View style = {styles.container}>
+      <Image
+        source={
+          perfil.foto_perfil
+            ? { uri: perfil.foto_perfil } 
+            : require("../../assets/user.png") 
+        }
+        style={styles.avatar}
+        resizeMode="cover"
+        onError={() => console.warn("Error cargando foto de perfil")}
+      />
 
-      {/* HEADER */}
-      <Text className="text-3xl text-center font-medium text-textPrimary mb-6">
-        Mi Perfil
+        <Text style={styles.name}>
+        {perfil.nombre} {perfil.apellido_paterno} {perfil.apellido_materno}
       </Text>
+      <Text style={styles.role}>{perfil.rol.toUpperCase()}</Text>
 
-      {/* CARD PRINCIPAL */}
-      <View className="items-center bg-white shadow-lg rounded-3xl px-6 py-8 mb-8 border border-graySoft">
+      <View style={styles.infoBox}>
+        <Text style={styles.label}>Nombre de usuario</Text>
+        <Text style={styles.value}>{perfil.nombre_usuario}</Text>
 
-        <Image
-          source={
-            perfil.foto_perfil
-              ? { uri: perfil.foto_perfil }
-              : require("../../assets/user.png")
-          }
-          className="w-32 h-32 rounded-full border-4 border-primary"
-          resizeMode="cover"
-        />
+        <View style={styles.divider} />
 
-        <Text className="text-2xl font-medium mt-4 text-textPrimary tracking-wide">
-          {perfil.nombre} {perfil.apellido_paterno} {perfil.apellido_materno}
-        </Text>
+        <Text style={styles.label}>Correo electrónico</Text>
+        <Text style={styles.value}>{perfil.correo}</Text>
 
-        <Text className="text-lg text-textSecondary capitalize mt-1">
-          {perfil.rol}
-        </Text>
+        <View style={styles.divider} />
 
+        <Text style={styles.label}>Teléfono</Text>
+        <Text style={styles.value}>{perfil.telefono}</Text>
       </View>
-
-      {/* SECCIÓN INFO GENERAL */}
-      <View className="bg-white shadow-md rounded-2xl px-6 py-5 mb-5 border border-graySoft">
-        <Text className="text-xl font-semibold mb-4 text-textPrimary">
-          Información General
-        </Text>
-
-        <View className="flex-row items-center mb-3">
-          <Ionicons name="person-outline" size={22} color="#2563EB" />
-          <Text className="ml-3 text-base text-textPrimary">
-            {perfil.nombre_usuario}
-          </Text>
-        </View>
-
-        <View className="flex-row items-center mb-3">
-          <Ionicons name="mail-outline" size={22} color="#2563EB" />
-          <Text className="ml-3 text-base text-textPrimary">
-            {perfil.correo}
-          </Text>
-        </View>
-
-        <View className="flex-row items-center mb-1">
-          <Ionicons name="call-outline" size={22} color="#2563EB" />
-          <Text className="ml-3 text-base text-textPrimary">
-            {perfil.telefono}
-          </Text>
-        </View>
       </View>
-
-      {/* SECCIÓN DATOS PERSONALES */}
-      <View className="bg-white shadow-md rounded-2xl px-6 py-5 mb-8 border border-graySoft">
-        <Text className="text-xl font-semibold mb-4 text-textPrimary">
-          Datos Personales
-        </Text>
-
-        <View className="flex-row items-center mb-3">
-          <Ionicons name="card-outline" size={22} color="#2563EB" />
-          <Text className="ml-3 text-base text-textPrimary">
-            {perfil.nombre} {perfil.apellido_paterno} {perfil.apellido_materno}
-          </Text>
-        </View>
-      </View>
-
-    </ScrollView>
     </Layout>
+      
   );
 }
+
+export default Perfil;
