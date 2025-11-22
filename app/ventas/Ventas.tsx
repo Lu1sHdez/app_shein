@@ -35,11 +35,22 @@ const Ventas = () => {
   if (loading) {
     return (
       <Layout>
-        <View className="flex-1 items-center justify-center py-12">
-          <ActivityIndicator size="large" color="#2563EB" />
-          <Text className="text-gray-600 font-medium mt-4 text-center">
-            Cargando información de ventas...
-          </Text>
+        <View className="flex-1 bg-white">
+          {/* Header */}
+          <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
+            <View className="flex-1">
+              <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
+              <Text className="text-gray-500 text-center text-sm mt-1">
+                Reportes y estadísticas
+              </Text>
+            </View>
+          </View>
+          <View className="flex-1 items-center justify-center py-12">
+            <ActivityIndicator size="large" color="#2563EB" />
+            <Text className="text-gray-600 font-medium mt-4 text-center">
+              Cargando información de ventas...
+            </Text>
+          </View>
         </View>
       </Layout>
     );
@@ -48,11 +59,22 @@ const Ventas = () => {
   if (!data) {
     return (
       <Layout>
-        <View className="flex-1 items-center justify-center py-12">
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text className="text-gray-500 font-medium mt-4 text-center">
-            No hay datos disponibles en este momento.
-          </Text>
+        <View className="flex-1 bg-white">
+          {/* Header */}
+          <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
+            <View className="flex-1">
+              <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
+              <Text className="text-gray-500 text-center text-sm mt-1">
+                Reportes y estadísticas
+              </Text>
+            </View>
+          </View>
+          <View className="flex-1 items-center justify-center py-12">
+            <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+            <Text className="text-gray-500 font-medium mt-4 text-center">
+              No hay datos disponibles en este momento.
+            </Text>
+          </View>
         </View>
       </Layout>
     );
@@ -120,97 +142,109 @@ const Ventas = () => {
 
   return (
     <Layout>
-      <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
-        {/* === RESUMEN GENERAL === */}
-        <View className="bg-white rounded-2xl p-5 mx-4 mt-4 shadow-sm border border-gray-200">
-          {/* Header */}
-          <View className="flex-row items-center mb-4">
-            <View className="w-12 h-12 rounded-xl bg-blue-100 items-center justify-center mr-3">
-              <Ionicons name="stats-chart" size={24} color="#2563EB" />
-            </View>
-            <View>
-              <Text className="text-xl font-bold text-gray-900">Resumen General</Text>
-              <Text className="text-gray-500 text-sm">Reporte de ventas</Text>
-            </View>
+      <View className="flex-1 bg-white">
+        {/* Header */}
+        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
+          <View className="flex-1">
+            <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
+            <Text className="text-gray-500 text-center text-sm mt-1">
+              Reportes y estadísticas
+            </Text>
           </View>
+        </View>
 
-          {/* Métricas */}
-          <View className="space-y-3">
-            <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
-              <Text className="text-gray-600 font-medium">Tipo de reporte</Text>
-              <View className="bg-primary/10 px-3 py-1 rounded-full">
-                <Text className="text-primary font-bold text-sm uppercase">
-                  {data.tipoReporte || "GENERAL"}
-                </Text>
+        <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
+          {/* === RESUMEN GENERAL === */}
+          <View className="bg-white rounded-2xl p-5 mx-4 mt-4 shadow-sm border border-gray-200">
+            {/* Header */}
+            <View className="flex-row items-center mb-4">
+              <View className="w-12 h-12 rounded-xl bg-blue-100 items-center justify-center mr-3">
+                <Ionicons name="stats-chart" size={24} color="#2563EB" />
+              </View>
+              <View>
+                <Text className="text-xl font-medium text-gray-900">Resumen General</Text>
+                <Text className="text-gray-500 text-sm">Reporte de ventas</Text>
               </View>
             </View>
 
-            <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
-              <Text className="text-gray-600 font-medium">Total vendido</Text>
-              <Text className="text-primary text-lg font-bold">
-                ${data.totalVentas}
-              </Text>
-            </View>
+            {/* Métricas */}
+            <View className="space-y-3">
+              <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
+                <Text className="text-gray-600 font-medium">Tipo de reporte</Text>
+                <View className="bg-primary/10 px-3 py-1 rounded-full">
+                  <Text className="text-primary font-medium text-sm uppercase">
+                    {data.tipoReporte || "GENERAL"}
+                  </Text>
+                </View>
+              </View>
 
-            <View className="flex-row justify-between items-center py-2">
-              <Text className="text-gray-600 font-medium">Ganancia neta</Text>
-              <Text className="text-green-600 text-lg font-bold">
-                ${data.totalGanancia}
-              </Text>
-            </View>
-          </View>
-        </View>
+              <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
+                <Text className="text-gray-600 font-medium">Total vendido</Text>
+                <Text className="text-primary text-lg font-medium">
+                  ${data.totalVentas}
+                </Text>
+              </View>
 
-        {/* === FILTROS DE PERIODO === */}
-        <View className="mx-4 mt-6 mb-4">
-          <Text className="text-gray-900 font-bold text-lg mb-3">Filtrar por período</Text>
-          <View className="flex-row justify-between space-x-2">
-            <FiltroButton periodo="dia" label="Hoy" />
-            <FiltroButton periodo="semana" label="Semana" />
-            <FiltroButton periodo="mes" label="Mes" />
-            <FiltroButton periodo="general" label="General" />
-          </View>
-        </View>
-
-        {/* === GRAFICAS CIRCULARES === */}
-        <GraficasCirculares
-          ventasPeriodo={ventasPeriodo}
-          totalVentas={totalVentasNumber}
-          totalGanancia={totalGananciaNumber}
-          etiquetaPeriodo={labelPeriodo}
-        />
-
-        {/* === FECHA COMPLETA PARA HOY === */}
-        {filtro === "dia" && (
-          <View className="mx-4 mt-4 mb-6">
-            <View className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-              <View className="flex-row items-center">
-                <Ionicons name="calendar-outline" size={16} color="#2563EB" />
-                <Text className="text-blue-800 font-medium ml-2 text-sm">
-                  {mostrarFechaCompleta(new Date().toString())}
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-600 font-medium">Ganancia neta</Text>
+                <Text className="text-green-600 text-lg font-medium">
+                  ${data.totalGanancia}
                 </Text>
               </View>
             </View>
           </View>
-        )}
 
-        {/* === INFORMACIÓN ADICIONAL === */}
-        <View className="mx-4 mt-4 mb-8">
-          <View className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center">
-                <Ionicons name="information-circle-outline" size={18} color="#6B7280" />
-                <Text className="text-gray-700 font-medium ml-2 text-sm">
-                  Resumen del período
-                </Text>
-              </View>
-              <Text className="text-gray-900 font-bold">
-                {ventasPeriodo.length} registros
-              </Text>
+          {/* === FILTROS DE PERIODO === */}
+          <View className="mx-4 mt-6 mb-4">
+            <Text className="text-gray-900 font-bold text-lg mb-3">Filtrar por período</Text>
+            <View className="flex-row justify-between space-x-2">
+              <FiltroButton periodo="dia" label="Hoy" />
+              <FiltroButton periodo="semana" label="Semana" />
+              <FiltroButton periodo="mes" label="Mes" />
+              <FiltroButton periodo="general" label="General" />
             </View>
           </View>
-        </View>
-      </ScrollView>
+
+          {/* === GRAFICAS CIRCULARES === */}
+          <GraficasCirculares
+            ventasPeriodo={ventasPeriodo}
+            totalVentas={totalVentasNumber}
+            totalGanancia={totalGananciaNumber}
+            etiquetaPeriodo={labelPeriodo}
+          />
+
+          {/* === FECHA COMPLETA PARA HOY === */}
+          {filtro === "dia" && (
+            <View className="mx-4 mt-4 mb-6">
+              <View className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <View className="flex-row items-center">
+                  <Ionicons name="calendar-outline" size={16} color="#2563EB" />
+                  <Text className="text-blue-800 font-medium ml-2 text-sm">
+                    {mostrarFechaCompleta(new Date().toString())}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* === INFORMACIÓN ADICIONAL === */}
+          <View className="mx-4 mt-4 mb-8">
+            <View className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <Ionicons name="information-circle-outline" size={18} color="#6B7280" />
+                  <Text className="text-gray-700 font-medium ml-2 text-sm">
+                    Resumen del período
+                  </Text>
+                </View>
+                <Text className="text-gray-900 font-bold">
+                  {ventasPeriodo.length} registros
+                </Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
     </Layout>
   );
 };

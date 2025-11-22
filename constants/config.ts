@@ -1,1 +1,1 @@
-export const API_URL = "http://192.168.1.71:4000";
+export const API_URL = "https://puntoshein-backend.onrender.com";

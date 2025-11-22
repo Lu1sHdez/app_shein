@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../constants/config";
-import CustomButton from "../../components/Button";
+import Boton from "../../components/Boton";
 import Layout from "../../components/Layout";
 import { useAlert } from "../context/AlertContext";
 
@@ -91,79 +91,104 @@ export default function Login({ navigation }: any) {
 
   return (
     <Layout>
-      <View className="flex-1 items-center justify-start px-6 bg-white">
-        {/* Logo */}
-        <Image
-          source={require("../../assets/logo.png")}
-          className="w-52 h-52"
-          resizeMode="contain"
-        />
+      <View className="flex-1 bg-gradient-to-b from-blue-50 to-white items-center justify-start pt-10 px-6">
 
-        {/* Título */}
-        <Text className="text-4xl font-bold text-primary mb-2 text-center">Iniciar sesión</Text>
+        {/* Card principal */}
+        <View className="w-full rounded-3xl p-7 ">
 
-        {/* Subtítulo */}
-        <Text className="text-lg font-medium text-secondary mb-6 text-center">
-          ¡Hola! Nos alegra verte de nuevo
-        </Text>
-
-        {/* Campo CORREO */}
-        <View className="w-full mb-4">
-          <Text className="text-base font-medium text-textPrimary mb-2">Correo electrónico</Text>
-          <View className={`flex-row items-center bg-gray-200 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-300'} px-3 py-2`}>
-            <TextInput
-              placeholder="Ingresa tu correo"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                if (errors.email) setErrors({ ...errors, email: undefined });
-              }}
-              className="flex-1 text-textPrimary text-base"
-              placeholderTextColor="#828282"
+          {/* Logo */}
+          <View className="items-center mb-4">
+            <Image
+              source={require("../../assets/logo.png")}
+              className="w-40 h-40"
+              resizeMode="contain"
             />
           </View>
-          {errors.email && <Text className="text-red-500 text-sm mt-2">{errors.email}</Text>}
-        </View>
+          {/* Título */}
+          <Text className="text-h1 font-medium text-primary text-center mb-1">
+            Iniciar sesión
+          </Text>
 
-        {/* Campo CONTRASEÑA */}
-        <View className="w-full mb-4">
-          <Text className="text-base font-medium text-textPrimary mb-2">Contraseña</Text>
-          <View className={`flex-row items-center bg-gray-200 rounded-xl border ${errors.password ? 'border-red-500' : 'border-gray-300'} px-3 py-2`}>
-            <TextInput
-              placeholder="Ingresa tu contraseña"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                if (errors.password) setErrors({ ...errors, password: undefined });
-              }}
-              className="flex-1 text-textPrimary text-base"
-              placeholderTextColor="#828282"
-              secureTextEntry={!mostrarContra}
-            />
-            <TouchableOpacity
-              onPress={() => setMostrarContra(!mostrarContra)}
-              className="px-2 justify-center items-center"
+          {/* Subtítulo */}
+          <Text className="text-h3 text-base font-medium text-textSecondary text-center mb-7">
+            Bienvenido de nuevo, inicia sesión para continuar
+          </Text>
+
+          {/* Campo CORREO */}
+          <View className="mb-5">
+            <Text className="text-h3 text-base font-medium text-textPrimary mb-1">
+              Correo electrónico
+            </Text>
+
+            <View
+              className={`flex-row items-center h-14 px-4 bg-grayLight rounded-2xl border 
+              ${errors.email ? "border-error" : "border-graySoft"}`}
             >
-              <Ionicons
-                name={mostrarContra ? "eye-off-outline" : "eye-outline"}
-                size={28}
-                color="#4F4F4F"
-              />
-            </TouchableOpacity>
-          </View>
-          {errors.password && <Text className="text-red-500 text-sm mt-2">{errors.password}</Text>}
-        </View>
+              <Ionicons name="mail-outline" size={22} color="#5c5c5c" />
 
-        {/* Cargando o botón */}
-        {loading ? (
-          <View className="items-center mt-4">
-            <ActivityIndicator size="large" color="#4F4F4F" />
-            <Text className="mt-2 text-gray-600">Cargando...</Text>
+              <TextInput
+                placeholder="ejemplo@gmail.com"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (errors.email) setErrors({ ...errors, email: undefined });
+                }}
+                className="text-body flex-1 ml-3 text-textPrimary font-regular text-base"
+                placeholderTextColor="#A0A0A0"
+              />
+            </View>
+
+            {errors.email && (
+              <Text className="text-error text-sm mt-1">{errors.email}</Text>
+            )}
           </View>
-        ) : (
-          <CustomButton title="Iniciar sesión" onPress={handleLogin} />
-        )}
+
+          {/* Campo CONTRASEÑA */}
+          <View className="mb-7">
+            <Text className="text-h3 text-base font-medium text-textPrimary mb-1">
+              Contraseña
+            </Text>
+
+            <View
+              className={`flex-row items-center h-14 px-4 bg-grayLight rounded-2xl border 
+              ${errors.password ? "border-error" : "border-graySoft"}`}
+            >
+              <Ionicons name="lock-closed-outline" size={22} color="#5c5c5c" />
+
+              <TextInput
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (errors.password) setErrors({ ...errors, password: undefined });
+                }}
+                className="flex-1 ml-3 text-textPrimary font-regular text-base"
+                placeholderTextColor="#A0A0A0"
+                secureTextEntry={!mostrarContra}
+              />
+
+              <TouchableOpacity onPress={() => setMostrarContra(!mostrarContra)}>
+                <Ionicons
+                  name={mostrarContra ? "eye-off-outline" : "eye-outline"}
+                  size={26}
+                  color="#5c5c5c"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {errors.password && (
+              <Text className="text-error text-sm mt-1">{errors.password}</Text>
+            )}
+          </View>
+
+          <Boton 
+            title="Iniciar sesión" 
+            onPress={handleLogin}
+            loading={loading}
+          />
+        </View>
       </View>
     </Layout>
+
   );
 }

@@ -1,0 +1,60 @@
+name: CI/CD Pipeline
+
+# Este flujo de trabajo se activa con un push o un pull request hacia la rama 'main'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    # El trabajo se ejecutará en un entorno Windows, que es el mismo que usamos en el desarrollo local
+    runs-on: windows-latest
+
+    steps:
+      # Paso 1: Hacemos un checkout del código desde el repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+        # Este paso obtiene la versión más reciente del código.
+
+      # Paso 2: Configuramos Node.js (usamos la versión 16 porque es compatible con nuestro proyecto)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+        # Configuramos Node.js para que tanto el backend como el frontend puedan ejecutarse correctamente.
+
+      # Paso 3: Instalamos todas las dependencias del proyecto
+      - name: Install dependencies
+        run: |
+          npm install
+        # Instala las dependencias necesarias tanto para el backend como para la aplicación móvil.
+
+      # Paso 4: Ejecutamos las pruebas unitarias de la aplicación
+      - name: Run tests
+        run: |
+          npm test -- --coverage
+        # Ejecutamos las pruebas para asegurarnos de que todo funcione correctamente. Usamos Jest para validar que la lógica de pedidos esté funcionando bien.
+
+      # Paso 5: Compilamos la aplicación móvil en React Native (para Android)
+      - name: Build React Native app (Android)
+        run: |
+          npx expo build:android
+        # Usamos Expo para compilar la aplicación para Android y generar el APK para distribución.
+
+      # Paso 6: Desplegamos el backend a la plataforma de elección (por ejemplo, Railway)
+      - name: Deploy backend to Railway
+        env:
+          RAILWAY_API_KEY: ${{ secrets.RAILWAY_API_KEY }}
+        run: |
+          git push railway main
+        # Desplegamos el backend utilizando Railway. Asegúrate de configurar la clave API en los secretos de GitHub.
+
+      # Paso 7: Desplegar la aplicación móvil (si es necesario)
+      - name: Deploy mobile app
+        run: |
+          echo "Aquí puedes agregar un despliegue para tu aplicación móvil si es necesario"
+        # Este paso es opcional. Si necesitas desplegar la app en una plataforma como App Center, puedes agregar los comandos necesarios aquí.

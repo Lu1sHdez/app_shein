@@ -7,13 +7,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { styles } from "./styles/registrarPedido";
-import SeleccionarCliente from "./SeleccionarCliente";
-import ListaProductosPedido from "./ListaProductosPedido";
 import { useAlert } from "../context/AlertContext";
 import Layout from "../../components/Layout";
 import PagoPedidoModal from "./PagoPedidoModal";
 import { usePedidos } from "../context/PedidosContext";
+import SeleccionarCliente from "./SeleccionarCliente";
+import ListaProductosPedido from "./ListaProductosPedido";
 
 const RegistrarPedido: React.FC = () => {
   const navigation = useNavigation();
@@ -30,18 +29,11 @@ const RegistrarPedido: React.FC = () => {
 
   const handlePedidoGuardado = async () => {
     try {
-      // 🔹 Actualiza el resumen global de pedidos
       await actualizarResumen();
-
-      // 🔹 Muestra alerta de éxito
       showAlert("Éxito", "Pedido registrado correctamente.", "success");
-
-      // 🔹 Limpia los estados del formulario
       setClienteSeleccionado(null);
       setProductos([]);
       setModalPagoVisible(false);
-
-      // 🔹 Regresa al Dashboard
       navigation.goBack();
     } catch (error) {
       console.error("Error al actualizar resumen:", error);
@@ -49,7 +41,6 @@ const RegistrarPedido: React.FC = () => {
     }
   };
 
-  // ✅ Validación previa antes de abrir el modal
   const continuarConPago = () => {
     const nuevosErrores: typeof errores = {};
 
@@ -71,72 +62,101 @@ const RegistrarPedido: React.FC = () => {
   };
 
   return (
-    <Layout title="Nuevo pedido" showBack>
-      {/* === Datos del cliente === */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Datos del cliente</Text>
-        <SeleccionarCliente onClienteSeleccionado={setClienteSeleccionado} />
-        {errores.cliente && <Text style={styles.errorText}>{errores.cliente}</Text>}
-      </View>
-
-      {/* === Productos seleccionados === */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Productos seleccionados</Text>
-        <ListaProductosPedido
-          productos={productos}
-          setProductos={setProductos}
-          clienteSeleccionado={clienteSeleccionado}
-        />
-        {errores.productos && <Text style={styles.errorText}>{errores.productos}</Text>}
-      </View>
-
-      {/* === Resumen del pedido === */}
-      {productos.length > 0 && (
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Resumen del pedido</Text>
-          <View style={styles.summaryRow}>
-            <Ionicons name="person-outline" size={18} color="#2563EB" />
-            <Text style={styles.summaryText}>
-              Cliente:{" "}
-              {clienteSeleccionado
-                ? `${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido_paterno}`
-                : "No seleccionado"}
+    <Layout>
+      <View className="flex-1 bg-white">
+        {/* Header */}
+        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
+          <View className="flex-1">
+            <Text className="text-2xl text-center font-bold text-gray-900">Nuevo Pedido</Text>
+            <Text className="text-gray-500 text-center text-sm mt-1">
+              Registra un nuevo pedido
             </Text>
           </View>
-          <View style={styles.summaryRow}>
-            <Ionicons name="pricetag-outline" size={18} color="#2563EB" />
-            <Text style={styles.summaryText}>Productos: {productos.length}</Text>
+        </View>
+
+        <View className="flex-1 bg-gray-50">
+          {/* === Datos del cliente === */}
+          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
+            <Text className="text-lg font-semibold text-gray-900 mb-3">Datos del cliente</Text>
+            <SeleccionarCliente onClienteSeleccionado={setClienteSeleccionado} />
+            {errores.cliente && (
+              <Text className="text-red-500 text-sm mt-2">{errores.cliente}</Text>
+            )}
           </View>
-          <View style={styles.summaryRow}>
-            <Ionicons name="cash-outline" size={18} color="#2563EB" />
-            <Text style={styles.summaryText}>Total: ${total.toFixed(2)}</Text>
+
+          {/* === Productos seleccionados === */}
+          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
+            <Text className="text-lg font-semibold text-gray-900 mb-3">Productos seleccionados</Text>
+            <ListaProductosPedido
+              productos={productos}
+              setProductos={setProductos}
+              clienteSeleccionado={clienteSeleccionado}
+            />
+            {errores.productos && (
+              <Text className="text-red-500 text-sm mt-2">{errores.productos}</Text>
+            )}
+          </View>
+
+          {/* === Resumen del pedido === */}
+          {productos.length > 0 && (
+            <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
+              <Text className="text-lg font-semibold text-gray-900 mb-3">Resumen del pedido</Text>
+              
+              <View className="flex-row items-center mb-2">
+                <Ionicons name="person-outline" size={18} color="#2563EB" />
+                <Text className="text-gray-700 ml-2 text-base">
+                  Cliente:{" "}
+                  {clienteSeleccionado
+                    ? `${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido_paterno}`
+                    : "No seleccionado"}
+                </Text>
+              </View>
+              
+              <View className="flex-row items-center mb-2">
+                <Ionicons name="pricetag-outline" size={18} color="#2563EB" />
+                <Text className="text-gray-700 ml-2 text-base">
+                  Productos: {productos.length}
+                </Text>
+              </View>
+              
+              <View className="flex-row items-center">
+                <Ionicons name="cash-outline" size={18} color="#2563EB" />
+                <Text className="text-gray-700 ml-2 text-base">
+                  Total: ${total.toFixed(2)}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* === Botón de continuar con pago === */}
+          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
+            <TouchableOpacity
+              className={`bg-blue-600 py-4 rounded-xl items-center ${
+                loading ? "opacity-60" : "active:opacity-80"
+              }`}
+              onPress={continuarConPago}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text className="text-white font-semibold text-base uppercase">
+                  Continuar con pago
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
-      )}
 
-      {/* === Botón de continuar con pago === */}
-      <View style={styles.card}>
-        <TouchableOpacity
-          style={[styles.saveButtonPrimary, loading && { opacity: 0.6 }]}
-          onPress={continuarConPago}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.saveButtonText}>Continuar con pago</Text>
-          )}
-        </TouchableOpacity>
+        {/* === Modal de pago === */}
+        <PagoPedidoModal
+          visible={modalPagoVisible}
+          onClose={() => setModalPagoVisible(false)}
+          clienteSeleccionado={clienteSeleccionado}
+          productos={productos}
+          onPedidoGuardado={handlePedidoGuardado}
+        />
       </View>
-
-      {/* === Modal de pago === */}
-      <PagoPedidoModal
-        visible={modalPagoVisible}
-        onClose={() => setModalPagoVisible(false)}
-        clienteSeleccionado={clienteSeleccionado}
-        productos={productos}
-        onPedidoGuardado={handlePedidoGuardado}
-      />
     </Layout>
   );
 };

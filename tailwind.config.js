@@ -30,11 +30,13 @@ module.exports = {
       fontFamily: {
         regular: ["Poppins_400Regular"],
         medium: ["Poppins_500Medium"],
-        bold: ["Poppins_700Bold"],
       },
       fontSize: {
-        '4xl': '2.5rem', 
-        '5xl': '3rem',
+        'h1': '2.5rem',
+        'h2': '1.8rem',
+        'h3': '1.5rem',
+        'body': '1rem',
+        'body-sm': '0.9rem',
       },
     },
   },

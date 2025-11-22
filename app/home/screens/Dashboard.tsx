@@ -89,24 +89,20 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
     <Layout>
       <View className="flex-1 bg-white">
         {/* Header personalizado para Dashboard */}
-        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
+        <View className="flex-row items-center justify-center px-6 py-5 bg-white border-b border-gray-100">
           <TouchableOpacity 
             onPress={toggleDrawer}
-            className="p-2 mr-3 bg-gray-100 rounded-xl active:bg-gray-200"
+            className="absolute left-6 p-2 bg-gray-100 rounded-xl active:bg-gray-200"
           >
-            <Ionicons name="menu" size={24} color="#374151" />
+            <Ionicons name="menu" size={40} color="#374151" />
           </TouchableOpacity>
           
-          <View className="flex-1">
-            <Text className="text-2xl font-bold text-gray-900">Inicio</Text>
-            <Text className="text-gray-500 text-sm mt-1">
+          <View className="flex-1 items-center">
+            <Text className="text-2xl font-medium text-gray-900">Inicio</Text>
+            <Text className="text-gray-500 font-regular text-sm mt-1">
               Resumen general de tu actividad
             </Text>
           </View>
-          
-          <TouchableOpacity className="p-2 bg-gray-100 rounded-xl active:bg-gray-200">
-            <Ionicons name="notifications-outline" size={22} color="#374151" />
-          </TouchableOpacity>
         </View>
 
         {/* Contenido con scroll */}
@@ -118,7 +114,7 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
             {/* Sección de accesos rápidos */}
             <View className="mb-8">
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-xl font-bold text-gray-900">
+                <Text className="text-xl font-medium text-gray-900">
                   Accesos rápidos
                 </Text>
                 <View className="w-2 h-2 bg-blue-500 rounded-full" />
