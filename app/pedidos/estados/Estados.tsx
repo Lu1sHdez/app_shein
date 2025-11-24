@@ -7,6 +7,7 @@ import Realizados from "./Realizados";
 import PorEntregar from "./PorEntregar";
 import Entregados from "./Entregado";
 import { useRoute } from "@react-navigation/native";
+import HeaderGlobal from "../../../components/HeaderGlobal";
 
 const Estados = () => {
   const route = useRoute<any>();
@@ -47,15 +48,11 @@ const Estados = () => {
   return (
     <Layout>
       <View className="flex-1 bg-white">
-        {/* Header personalizado */}
-        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
-          <View className="flex-1">
-            <Text className="text-2xl text-center font-bold text-gray-900">Pedidos</Text>
-            <Text className="text-gray-500 text-center text-sm mt-1">
-              Gestión de estados de pedidos
-            </Text>
-          </View>
-        </View>
+      <HeaderGlobal
+        titulo="Pedidos"
+        subtitulo="Gestión de estados de pedidos"
+      />
+
 
         {/* Tabs */}
         <View className="bg-white border-b border-gray-200">

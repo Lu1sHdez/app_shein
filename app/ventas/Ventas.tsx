@@ -5,6 +5,7 @@ import Layout from "../../components/Layout";
 import axios from "axios";
 import { API_URL } from "../../constants/config";
 import GraficasCirculares from "./components/GraficasCirculares";
+import HeaderGlobal from "../../components/HeaderGlobal";
 
 type FiltroPeriodo = "dia" | "semana" | "mes" | "general";
 
@@ -143,15 +144,11 @@ const Ventas = () => {
   return (
     <Layout>
       <View className="flex-1 bg-white">
-        {/* Header */}
-        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
-          <View className="flex-1">
-            <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
-            <Text className="text-gray-500 font-regular text-center text-sm mt-1">
-              Reportes y estadísticas
-            </Text>
-          </View>
-        </View>
+      <HeaderGlobal
+        titulo="Ventas"
+        subtitulo="Reportes y estadísticas"
+      />
+
 
         <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
           {/* === RESUMEN GENERAL === */}

@@ -75,12 +75,12 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
     <Layout>
       <View className="flex-1 bg-white">
         {/* Header personalizado */}
-        <View className="flex-row items-center justify-center px-6 py-5 bg-gray-100 border-b border-gray-100">
+        <View className="flex-row items-center justify-center px-6 py-5 bg-blue-100 border-b border-gray-100">
           <TouchableOpacity
             onPress={toggleDrawer}
-            className="absolute left-6 p-2 bg-gray-100 rounded-xl active:bg-gray-200"
+            className="absolute left-6 p-2 rounded-xl active:bg-gray-200"
           >
-            <Ionicons name="menu" size={40} color="#374151" />
+            <Ionicons name="menu-sharp" size={40} color="#374151" />
           </TouchableOpacity>
 
           <View className="flex-1 items-center">

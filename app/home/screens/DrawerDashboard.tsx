@@ -1,7 +1,7 @@
-import React, { useState, useEffect  } from "react";
-import { menuStyles, iconSize } from "../../../styles/menu.styles";
-import { colors } from "../../../constants/theme";
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../../types/navigation";
 import { obtenerPerfilAdmin } from "../../perfil/ObtenerPerfil";
 import {
   View,
@@ -12,22 +12,16 @@ import {
   ActivityIndicator,
   Image,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Dashboard from "./Dashboard";
-import { useNavigation } from "@react-navigation/native";
 import { handleLogout } from "./logout/logout";
-import { RootStackParamList } from "../../../types/navigation";
-
-
-type DashboardScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Perfil"
->;
 
 const { width } = Dimensions.get("window");
 const drawerWidth = width * 0.72;
 
+type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, "Perfil">;
 
 const DrawerDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,74 +53,101 @@ const DrawerDashboard = () => {
     setActiveItem(item);
     toggleDrawer();
 
-    if (item === "Inicio") navigation.navigate("Dashboard");
-    if (item === "Pedidos") navigation.navigate("EstadoPedidos", { screen: "PorHacer" });
-    if (item === "Clientes") navigation.navigate("Clientes");
-    if (item === "Perfil") navigation.navigate("Perfil");
-    if (item === "Ventas") navigation.navigate("Ventas");
-    if (item === "Reportes") navigation.navigate("Reportes");
-
+    switch (item) {
+      case "Inicio":
+        navigation.navigate("Dashboard");
+        break;
+      case "Pedidos":
+        navigation.navigate("EstadoPedidos", { screen: "PorHacer" });
+        break;
+      case "Clientes":
+        navigation.navigate("Clientes");
+        break;
+      case "Perfil":
+        navigation.navigate("Perfil");
+        break;
+      case "Ventas":
+        navigation.navigate("Ventas");
+        break;
+      case "Reportes":
+        navigation.navigate("Reportes");
+        break;
+    }
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.white }}>
+    <View className="flex-1 pt-3 bg-white">
       <Dashboard toggleDrawer={toggleDrawer} />
 
       {isOpen && (
         <TouchableWithoutFeedback onPress={toggleDrawer}>
-          <View style={menuStyles.overlay} />
+          <View className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-30 z-10" />
         </TouchableWithoutFeedback>
       )}
 
       <Animated.View
         style={[
-          menuStyles.drawerContainer,
+          { width: drawerWidth,height: "100%", position: "absolute", top: 0, left: 0 },
           { transform: [{ translateX: animation }] },
         ]}
+        className="bg-white shadow-lg z-20"
       >
-        
-        <View style={menuStyles.header}>
-          <TouchableOpacity onPress={toggleDrawer} style={menuStyles.closeButton}>
-            <Ionicons name="close" size={40} color="#333" />
+        {/* Header con más padding superior */}
+        <View className="flex-col items-center justify-center bg-gray-100 border-b border-gray-200 pt-12 pb-6">
+        <View className="flex-row items-center justify-start w-full px-4 mb-6">
+          <TouchableOpacity
+            onPress={toggleDrawer}
+            className="p-2 rounded-xl bg-gray-100 active:bg-gray-200"
+          >
+            <Ionicons name="close" size={50} color="#333" />
           </TouchableOpacity>
+
+          <View className="flex-1" />
+        </View>
+
 
           <TouchableOpacity
             onPress={() => {
               toggleDrawer();
               navigation.navigate("Perfil");
             }}
+            className="mb-4"
           >
-            <Image
-              source={
-                perfil?.foto_perfil
-                  ? { uri: perfil.foto_perfil }  // 🔥 foto real del admin
-                  : require("../../../assets/user.png")  // 🔁 imagen por defecto
-              }
-              style={menuStyles.avatar}
-              resizeMode="cover"
-              onError={(e) => console.warn("Error cargando imagen:", e.nativeEvent.error)}
-            />
+          <Image
+            source={
+              perfil && perfil.foto_perfil
+                ? { uri: perfil.foto_perfil }
+                : require("../../../assets/user.png")
+            }
+            className="w-32 h-32 rounded-full border-4 border-blue-500 bg-blue-100 shadow-lg"
+            resizeMode="cover"
+            onError={() => console.warn("Error cargando foto de perfil")}
+          />
+
+
           </TouchableOpacity>
 
           {perfil ? (
-            <>
-              <Text style={menuStyles.userRole}>{perfil.rol}</Text>
-              <Text style={menuStyles.userName}>
-              {(perfil.nombre && perfil.apellido_materno) ? `${perfil.nombre} ${perfil.apellido_paterno}` : perfil.nombre_usuario}
+            <View className="items-center px-4">
+              <View className="bg-blue-100 px-4 py-1.5 rounded-full">
+                <Text className="text-primary font-regular text-body tracking-wide">
+                  {perfil.rol}
+                </Text>
+              </View>
+              <Text className="text-2xl font-medium text-gray-900 mt-4 text-center">
+                {(perfil.nombre && perfil.apellido_paterno)
+                  ? `${perfil.nombre} ${perfil.apellido_paterno}`
+                  : perfil.nombre_usuario}
               </Text>
-              <Text style={menuStyles.userEmail}>{perfil.correo}</Text>
-            </>
+
+              <Text className="text-body font-regular text-primary text-center">{perfil.correo}</Text>
+            </View>
           ) : (
-            <>
-              <ActivityIndicator size="small" color={colors.primary} />
-              <Text style={{ color: "#777", marginTop: 5 }}>Cargando perfil...</Text>
-            </>
+            <ActivityIndicator size="small" color="#6366F1" />
           )}
         </View>
 
-
-        
-        <View style={menuStyles.drawerContent}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 5 }} className="p-8 font space-y-4">
           {[
             { name: "Inicio", icon: "home-outline", activeIcon: "home" },
             { name: "Pedidos", icon: "bag-handle-outline", activeIcon: "bag-handle" },
@@ -138,52 +159,48 @@ const DrawerDashboard = () => {
           ].map((item) => (
             <TouchableOpacity
               key={item.name}
-              style={[
-                menuStyles.drawerItem,
-                activeItem === item.name && menuStyles.activeItem,
-              ]}
               onPress={() => handleSelect(item.name)}
-            > 
+              className={`flex-row  items-center py-4 px-3 gap-6 rounded-xl ${
+                activeItem === item.name ? "bg-blue-100" : "bg-white"
+              }`}
+            >
               <Ionicons
-                name={(activeItem === item.name ? item.activeIcon : item.icon) as any}
-                size={iconSize}
-                color={activeItem === item.name ? colors.primary : colors.grayDark}
+                name={activeItem === item.name ? item.activeIcon : item.icon}
+                size={25}
+                color={activeItem === item.name ? "#2563EB" : "#4B5563"}
               />
               <Text
-                style={[
-                  menuStyles.drawerText,
-                  { color: activeItem === item.name ? colors.primary : "#333" },
-                ]}
+                className={`text-h3 font-regular ${
+                  activeItem === item.name ? "text-blue-600 font-semibold" : "text-gray-700"
+                }`}
               >
                 {item.name}
               </Text>
+
             </TouchableOpacity>
           ))}
 
-          <View style={menuStyles.divider} />
+          <View className="h-px bg-gray-200 my-4" />
 
-          
           <TouchableOpacity
-            style={menuStyles.drawerItem}
             onPress={async () => {
               setLoading(true);
-              await handleLogout(navigation); 
+              await handleLogout(navigation);
               setLoading(false);
             }}
             disabled={loading}
+            className="flex-row items-center py-4 gap-6 rounded-lg"
           >
             {loading ? (
               <ActivityIndicator size="small" color="#E61610" />
             ) : (
               <>
-                <Ionicons name="log-out-outline" size={iconSize} color="#E61610" />
-                <Text style={[menuStyles.drawerText, { color: "#E61610" }]}>
-                  Cerrar sesión
-                </Text>
+                <Ionicons name="log-out-outline" size={25} color="#E61610" />
+                <Text className="text-h3 text-red-600 font-semibold">Cerrar sesión</Text>
               </>
             )}
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </Animated.View>
     </View>
   );

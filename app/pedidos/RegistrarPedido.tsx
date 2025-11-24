@@ -13,6 +13,8 @@ import PagoPedidoModal from "./PagoPedidoModal";
 import { usePedidos } from "../context/PedidosContext";
 import SeleccionarCliente from "./SeleccionarCliente";
 import ListaProductosPedido from "./ListaProductosPedido";
+import HeaderGlobal from "../../components/HeaderGlobal";
+import Boton from "../../components/Boton";
 
 const RegistrarPedido: React.FC = () => {
   const navigation = useNavigation();
@@ -64,16 +66,10 @@ const RegistrarPedido: React.FC = () => {
   return (
     <Layout>
       <View className="flex-1 bg-white">
-        {/* Header */}
-        <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
-          <View className="flex-1">
-            <Text className="text-h2 text-center font-semibold text-black">Nuevo Pedido</Text>
-
-            <Text className="text-gray-500 font-regular text-center text-sm mt-1">
-              Registra un nuevo pedido
-            </Text>
-          </View>
-        </View>
+        <HeaderGlobal
+          titulo="Nuevo Pedido"
+          subtitulo="Registra un nuevo pedido"
+        />
 
         <View className="flex-1 bg-gray-50">
           {/* === Datos del cliente === */}
@@ -129,24 +125,14 @@ const RegistrarPedido: React.FC = () => {
             </View>
           )}
 
-          {/* === Botón de continuar con pago === */}
-          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-            <TouchableOpacity
-              className={`bg-blue-600 py-4 rounded-xl items-center ${
-                loading ? "opacity-60" : "active:opacity-80"
-              }`}
-              onPress={continuarConPago}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFF" />
-              ) : (
-                <Text className="text-white font-semibold text-base uppercase">
-                  Continuar con pago
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
+        <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
+          <Boton
+            title="Continuar con pago"
+            onPress={continuarConPago}
+            loading={loading}
+          />
+        </View>
+
         </View>
 
         {/* === Modal de pago === */}
