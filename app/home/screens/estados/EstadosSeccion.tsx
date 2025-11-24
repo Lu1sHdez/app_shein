@@ -113,10 +113,10 @@ const Estados: React.FC = () => {
       {/* Header de la sección */}
       <View className="flex-row items-center justify-between mb-6">
         <View>
-          <Text className="text-2xl font-bold text-gray-900">
+          <Text className="text-2xl font-medium text-gray-900">
             Resumen de pedidos
           </Text>
-          <Text className="text-gray-500 text-base mt-1">
+          <Text className="text-gray-500 font-regular text-base mt-1">
             Estado actual de tus pedidos
           </Text>
         </View>
