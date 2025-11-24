@@ -25,7 +25,6 @@ const GraficasCombinadas: React.FC<GraficasCombinadasProps> = ({
   ventasPeriodo,
   totalVentas,
   totalGanancia,
-  etiquetaPeriodo,
   tipoReporte,
 }) => {
   const [visualizacionActiva, setVisualizacionActiva] =
@@ -242,9 +241,9 @@ const GraficasCombinadas: React.FC<GraficasCombinadasProps> = ({
         <Text className="text-gray-500 text-xs font-medium">{titulo}</Text>
         <Ionicons name={icono as any} size={16} color={iconColor} />
       </View>
-      <Text className={`${textClass} text-lg font-bold`}>{valor}</Text>
+      <Text className={`${textClass} text-lg font-semibold`}>{valor}</Text>
       {subtitulo && (
-        <Text className="text-gray-400 text-xs mt-1">{subtitulo}</Text>
+        <Text className="text-grayDark font-light text-body-sm mt-1">{subtitulo}</Text>
       )}
     </View>
   );
@@ -252,7 +251,7 @@ const GraficasCombinadas: React.FC<GraficasCombinadasProps> = ({
   return (
     <View>
       {/* Métricas principales */}
-      <View className="flex-row mx-4 mt-4">
+      <View className="flex-row  mx-4 mt-4">
         <MetricCard
           titulo="Total Ventas"
           valor={`$${totalVentas.toFixed(2)}`}
@@ -376,7 +375,7 @@ const GraficasCombinadas: React.FC<GraficasCombinadasProps> = ({
               <Text className="text-gray-500 text-xs font-medium">
                 Periodos Activos
               </Text>
-              <Text className="text-purple-600 text-lg font-bold mt-1">
+              <Text className="text-primary text-lg font-bold mt-1">
                 {periodosActivos}
               </Text>
             </View>
