@@ -29,7 +29,7 @@ const TodasLasActividades = () => {
     <View className="flex-1 bg-white">
       <HeaderGlobal titulo="Todas las actividades" subtitulo="Historial reciente" />
 
-      <ScrollView className="flex-1 bg-grayLight px-4 py-4">
+      <ScrollView className="flex-1 bg-grayLight px-4 py-4" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* LOADING */}
         {loading && (
           <View className="items-center mt-20">
@@ -79,6 +79,7 @@ const TodasLasActividades = () => {
             </View>
           ))}
       </ScrollView>
+      
     </View>
     </Layout>
   );
