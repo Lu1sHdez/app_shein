@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Animated,
 } from "react-native";
 import Layout from "../../../components/Layout";
 import { Ionicons } from "@expo/vector-icons";

@@ -100,7 +100,7 @@ export default function Login({ navigation }: any) {
   };
 
   return (
-    <Layout>
+    <Layout mostrarBottom={false}>
       {/* Dismiss keyboard when tapping outside */}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
