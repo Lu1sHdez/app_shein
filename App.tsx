@@ -25,7 +25,7 @@ function LoadingScreen() {
   return (
     <View className="flex-1 bg-white justify-center items-center">
       <ActivityIndicator size="large" color="#4F4F4F" />
-      <Text className="mt-4 text-lg text-gray-600">Verificando sesión...</Text>
+      <Text className="font-regular mt-4 text-h3 text-gray-600">Verificando sesión...</Text>
     </View>
   );
 }

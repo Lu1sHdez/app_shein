@@ -4,8 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Layout from "../../components/Layout";
 import axios from "axios";
 import { API_URL } from "../../constants/config";
-import GraficasCirculares from "./components/GraficasCirculares";
 import HeaderGlobal from "../../components/HeaderGlobal";
+import GraficasCombinadas from "./components/GraficasCirculares";
 
 type FiltroPeriodo = "dia" | "semana" | "mes" | "general";
 
@@ -148,8 +148,6 @@ const Ventas = () => {
         titulo="Ventas"
         subtitulo="Reportes y estadísticas"
       />
-
-
         <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
           {/* === RESUMEN GENERAL === */}
           <View className="bg-white rounded-2xl p-5 mx-4 mt-4 shadow-sm border border-gray-200">
@@ -202,12 +200,12 @@ const Ventas = () => {
             </View>
           </View>
 
-          {/* === GRAFICAS CIRCULARES === */}
-          <GraficasCirculares
+          <GraficasCombinadas
             ventasPeriodo={ventasPeriodo}
             totalVentas={totalVentasNumber}
             totalGanancia={totalGananciaNumber}
             etiquetaPeriodo={labelPeriodo}
+            tipoReporte={data.tipoReporte || "general"}
           />
 
           {/* === FECHA COMPLETA PARA HOY === */}
