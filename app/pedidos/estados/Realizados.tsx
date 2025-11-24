@@ -11,12 +11,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { styles } from "./styles/realizados";
 import { API_URL } from "../../../constants/config";
 import { useAlert } from "../../context/AlertContext";
 import { usePedidos } from "../../context/PedidosContext";
 
-// 🔹 Habilitar animaciones en Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -27,13 +25,13 @@ const Realizados: React.FC = () => {
   const { showAlert } = useAlert();
   const { actualizarResumen } = usePedidos();
 
-  // === Cargar pedidos "Realizados" ===
+  // === CARGAR PEDIDOS ===
   const fetchPedidos = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/app/pedidos/estado/Realizados`);
-      setPedidos(response.data);
+      const res = await axios.get(`${API_URL}/api/app/pedidos/estado/Realizados`);
+      setPedidos(res.data);
     } catch (error: any) {
-      console.log("Error al obtener pedidos:", error.response?.data || error.message);
+      console.log("Error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -43,100 +41,108 @@ const Realizados: React.FC = () => {
     fetchPedidos();
   }, []);
 
-  // === Cambiar estado a "Por entregar" ===
+  // === CAMBIAR A "POR ENTREGAR" ===
   const marcarComoPorEntregar = async (pedidoId: string) => {
     try {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-      // 🔹 Remover visualmente el pedido de la lista
       setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
 
-      // 🔹 Actualizar estado en el backend
       await axios.put(`${API_URL}/api/app/pedidos/${pedidoId}/estado`, {
         nuevoEstado: "Por entregar",
       });
 
-      // 🔹 Actualizar resumen global (tarjetas del dashboard)
       await actualizarResumen();
 
-      // 🔹 Alerta de confirmación
-      showAlert("Actualizado", "El pedido ha pasado a 'Por entregar'.", "success");
+      showAlert("Actualizado", "El pedido pasó a 'Por entregar'.", "success");
     } catch (error: any) {
-      console.log("Error al cambiar estado:", error.response?.data || error.message);
-      showAlert("Error", "No se pudo cambiar el estado del pedido.", "error");
+      showAlert("Error", "No se pudo cambiar el estado.", "error");
     }
   };
 
-  // === Estado de carga ===
+  // === CARGANDO ===
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View className="flex-1 justify-center items-center bg-grayLight">
         <ActivityIndicator size="large" color="#2563EB" />
-        <Text style={styles.loadingText}>Cargando pedidos realizados...</Text>
+        <Text className="text-textSecondary mt-3">Cargando pedidos...</Text>
       </View>
     );
   }
 
-  // === Si no hay pedidos ===
+  // === VACÍO ===
   if (pedidos.length === 0) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.emptyText}>Sin pedidos realizados aún</Text>
+      <View className="flex-1 justify-center items-center bg-grayLight">
+        <Text className="text-textPrimary font-medium text-body">
+          No hay pedidos realizados aún.
+        </Text>
       </View>
     );
   }
 
-  // === Render principal ===
+  // === RENDER PRINCIPAL ===
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 px-4 py-4 bg-grayLight">
       {pedidos.map((p) => (
-        <View key={p.id} style={styles.card}>
-          {/* === Encabezado === */}
-          <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>
-                Pedido de {p.Cliente?.nombre?.trim()} {p.Cliente?.apellido_paterno?.trim()}
+        <View
+          key={p.id}
+          className="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-graySoft"
+        >
+          {/* HEADER */}
+          <View className="flex-row justify-between items-center">
+            <View className="flex-1">
+              <Text className="text-body font-medium text-textPrimary">
+                Pedido de {p.Cliente?.nombre} {p.Cliente?.apellido_paterno}
               </Text>
-              <Text style={styles.fechaText}>
+              <Text className="text-textSecondary text-body-sm mt-1">
                 {new Date(p.fecha).toLocaleDateString("es-MX")}
               </Text>
             </View>
 
-            <View style={styles.estadoBox}>
-              <Text style={styles.estadoText}>{p.EstadoPedido?.estado}</Text>
+            {/* CHIP */}
+            <View className="bg-success px-3 py-1 rounded-full">
+              <Text className="text-white text-[12px] font-medium">
+                {p.EstadoPedido?.estado}
+              </Text>
             </View>
           </View>
 
-          {/* === Totales === */}
-          <Text style={styles.totalText}>
-            <Text style={styles.bold}>Total:</Text> ${p.total}{"   "}
-            <Text style={styles.bold}>Restante:</Text> ${p.restante}
+          {/* TOTALES */}
+          <Text className="text-textPrimary text-body mt-3">
+            <Text className="font-medium">Total:</Text> ${p.total} ·{" "}
+            <Text className="font-medium">Restante:</Text> ${p.restante}
           </Text>
 
-          {/* === Lista de productos === */}
-          <View style={styles.productList}>
+          {/* LISTA DE PRODUCTOS */}
+          <View className="mt-3">
             {p.DetallePedidos.map((prod: any) => (
-              <View key={prod.id} style={styles.productItem}>
+              <View
+                key={prod.id}
+                className="flex-row items-center mb-2 bg-grayLight p-3 rounded-xl"
+              >
                 <Ionicons
                   name="checkmark-circle"
                   size={20}
-                  color="#22C55E"
-                  style={{ marginRight: 6 }}
+                  color="#27AE60"
+                  className="mr-2"
                 />
-                <Text style={styles.productText}>
-                  {prod.nombre_producto} - {prod.cantidad} x ${prod.precio}
+
+                <Text className="text-textPrimary text-body flex-1">
+                  {prod.nombre_producto} – {prod.cantidad} × ${prod.precio}
                 </Text>
               </View>
             ))}
           </View>
 
-          {/* === Botón "Marcar como por entregar" === */}
+          {/* BOTÓN POR ENTREGAR */}
           <TouchableOpacity
-            style={styles.btnPorEntregar}
             onPress={() => marcarComoPorEntregar(p.id)}
+            className="mt-4 flex-row items-center justify-center bg-primary py-3 rounded-xl active:opacity-80"
           >
-            <Ionicons name="cube-outline" size={18} color="white" />
-            <Text style={styles.btnText}>Marcar como por entregar</Text>
+            <Text className="text-white font-medium text-body ml-2">
+              Marcar como por entregar
+            </Text>
           </TouchableOpacity>
         </View>
       ))}

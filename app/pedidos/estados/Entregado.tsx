@@ -11,12 +11,14 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { styles } from "./styles/entregado";
 import { API_URL } from "../../../constants/config";
 import { usePedidos } from "../../context/PedidosContext";
 
-// 🔹 Habilitar animaciones para Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+// Animaciones Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -24,17 +26,17 @@ const Entregado: React.FC = () => {
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
   const { actualizarResumen } = usePedidos();
 
-  // === Obtener pedidos "Entregado" ===
   const fetchPedidos = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/app/pedidos/estado/Entregado`);
+      const res = await axios.get(`${API_URL}/api/app/pedidos/estado/Entregado`);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPedidos(response.data);
+      setPedidos(res.data);
       await actualizarResumen();
-    } catch (error: any) {
-      console.log("Error al obtener pedidos:", error.response?.data || error.message);
+    } catch (e: any) {
+      console.log("Error:", e.response?.data || e.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -45,105 +47,135 @@ const Entregado: React.FC = () => {
     fetchPedidos();
   }, []);
 
-  // === Recarga con gesto pull-to-refresh ===
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchPedidos();
   };
 
-  // === Estado de carga ===
+  // === LOADING ===
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View className="flex-1 justify-center items-center bg-grayLight">
         <ActivityIndicator size="large" color="#2563EB" />
-        <Text style={styles.loadingText}>Cargando pedidos entregados...</Text>
+        <Text className="text-body-sm font-regular text-textSecondary mt-3">
+          Cargando pedidos entregados...
+        </Text>
       </View>
     );
   }
 
-  // === Si no hay pedidos ===
+  // === SIN PEDIDOS ===
   if (pedidos.length === 0) {
     return (
-      <View style={styles.center}>
-        <Ionicons name="checkmark-done-circle-outline" size={46} color="#16A34A" />
-        <Text style={styles.text}>No hay pedidos entregados aún</Text>
+      <View className="flex-1 justify-center items-center bg-grayLight px-6">
+        <Ionicons
+          name="checkmark-done-circle-outline"
+          size={56}
+          color="#16A34A"
+        />
+        <Text className="text-body font-medium text-textPrimary mt-3 text-center">
+          No hay pedidos entregados aún
+        </Text>
       </View>
     );
   }
 
-  // === Render principal ===
   return (
     <ScrollView
-      style={styles.container}
+      className="flex-1 px-4 py-4 bg-grayLight"
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="#2563EB"
+        />
       }
     >
       {pedidos.map((p) => (
-        <View key={p.id} style={styles.card}>
-          {/* === ENCABEZADO === */}
-          <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>
-                Pedido de {p.Cliente?.nombre?.trim()} {p.Cliente?.apellido_paterno?.trim()}
+        <View
+          key={p.id}
+          className="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-graySoft"
+        >
+          {/* ENCABEZADO */}
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-2">
+              <Text className="text-body font-medium text-textPrimary">
+                Pedido de {p.Cliente?.nombre?.trim()}{" "}
+                {p.Cliente?.apellido_paterno?.trim()}
               </Text>
-              <Text style={styles.subText}>
+
+              <Text className="text-body-sm font-regular text-textSecondary mt-1">
                 {p.Cliente?.telefono || "Sin teléfono"}
               </Text>
-              <Text style={styles.fechaText}>
-                Entregado el {new Date(p.fecha).toLocaleDateString("es-MX")}
+
+              <Text className="text-body-sm font-regular text-textSecondary mt-1">
+                Entregado el{" "}
+                <Text className="font-medium text-textPrimary">
+                  {new Date(p.fecha).toLocaleDateString("es-MX")}
+                </Text>
               </Text>
             </View>
 
-            <View style={styles.estadoBox}>
-              <Text style={styles.estadoText}>{p.EstadoPedido?.estado}</Text>
+            <View className="bg-success px-3 py-1 rounded-full">
+              <Text className="text-[12px] font-medium text-white">
+                Entregado
+              </Text>
             </View>
           </View>
 
-          {/* === DETALLES DE PAGO === */}
-          <View style={styles.pagoBox}>
+          {/* MÉTODO DE PAGO */}
+          <View className="mt-4 flex-row items-center">
             <Ionicons name="card-outline" size={18} color="#2563EB" />
-            <Text style={styles.pagoText}>
-              Método de pago: <Text style={styles.bold}>{p.metodoPago}</Text>
+            <Text className="ml-2 text-body font-regular text-textPrimary">
+              Método de pago:{" "}
+              <Text className="font-medium">{p.metodoPago}</Text>
             </Text>
           </View>
 
-          <Text style={styles.totalText}>
-            <Text style={styles.bold}>Total:</Text> ${p.total}{"   "}
-            <Text style={styles.bold}>Anticipo:</Text> ${p.anticipo}{"   "}
-            <Text style={styles.bold}>Restante:</Text> ${p.restante}
+          {/* TOTALES */}
+          <Text className="text-body font-regular text-textPrimary mt-2">
+            <Text className="font-medium">Total:</Text> ${p.total} ·{" "}
+            <Text className="font-medium">Anticipo:</Text> ${p.anticipo} ·{" "}
+            <Text className="font-medium">Restante:</Text> ${p.restante}
           </Text>
 
-          {/* === PRODUCTOS === */}
-          <View style={styles.productList}>
+          {/* PRODUCTOS */}
+          <View className="mt-4 space-y-2">
             {p.DetallePedidos.map((prod: any) => (
-              <View key={prod.id} style={styles.productItem}>
+              <View
+                key={prod.id}
+                className="flex-row items-center p-3 rounded-xl bg-grayLight border border-graySoft"
+              >
                 <Ionicons
                   name="checkmark-done-circle"
                   size={20}
                   color="#16A34A"
-                  style={{ marginRight: 6 }}
                 />
-                <Text style={styles.productText}>
-                  {prod.nombre_producto.trim()} ({prod.talla || "Sin talla"}) - {prod.cantidad} x ${prod.precio}
+                <Text className="ml-3 text-body font-regular text-textPrimary">
+                  {prod.nombre_producto.trim()} ({prod.talla || "Sin talla"}) ·{" "}
+                  {prod.cantidad} × ${prod.precio}
                 </Text>
               </View>
             ))}
           </View>
 
-          {/* === OBSERVACIONES Y FECHAS === */}
-          <View style={styles.footerBox}>
-            <Text style={styles.obsText}>
-               {p.EstadoPedido?.observaciones || "Pedido entregado correctamente."}
+          {/* OBSERVACIONES */}
+          <View className="mt-4">
+            <Text className="text-body-sm font-regular text-textSecondary">
+              {p.EstadoPedido?.observaciones || "Pedido entregado correctamente."}
             </Text>
-            <Text style={styles.footerDate}>
-              Actualizado el {new Date(p.updatedAt).toLocaleDateString("es-MX")} a las{" "}
-              {new Date(p.updatedAt).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
+
+            <Text className="text-body-sm font-regular text-textSecondary mt-2">
+              Actualizado el{" "}
+              {new Date(p.updatedAt).toLocaleDateString("es-MX")} a las{" "}
+              {new Date(p.updatedAt).toLocaleTimeString("es-MX", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </Text>
           </View>
         </View>
       ))}
-
     </ScrollView>
   );
 };

@@ -13,35 +13,38 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { styles } from "./styles/porEntregar";
 import { API_URL } from "../../../constants/config";
 import { useAlert } from "../../context/AlertContext";
 import { usePedidos } from "../../context/PedidosContext";
 
-// 🔹 Habilitar animaciones en Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+// Animaciones Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 const PorEntregar: React.FC = () => {
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
   const { showAlert } = useAlert();
   const { actualizarResumen } = usePedidos();
 
-  // 🔸 Estados para modal de confirmación
   const [showModal, setShowModal] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<any>(null);
   const [montoPago, setMontoPago] = useState("");
   const [metodoPago, setMetodoPago] = useState("Efectivo");
 
-  // === Obtener pedidos "Por entregar" ===
   const fetchPedidos = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/app/pedidos/estado/Por%20entregar`);
-      setPedidos(response.data);
+      const res = await axios.get(
+        `${API_URL}/api/app/pedidos/estado/Por%20entregar`
+      );
+      setPedidos(res.data);
     } catch (error: any) {
-      console.log("Error al obtener pedidos:", error.response?.data || error.message);
+      console.log("Error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -51,8 +54,11 @@ const PorEntregar: React.FC = () => {
     fetchPedidos();
   }, []);
 
-  // === Función que marca como entregado (usa backend con confirmación de pago) ===
-  const marcarComoEntregado = async (pedidoId: string, metodo: string, pagoFinal: number) => {
+  const marcarComoEntregado = async (
+    pedidoId: string,
+    metodo: string,
+    pagoFinal: number
+  ) => {
     try {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
@@ -60,144 +66,173 @@ const PorEntregar: React.FC = () => {
         nuevoEstado: "Entregado",
         metodoPagoFinal: metodo,
         montoPagado: pagoFinal,
-        observaciones: "Pago final registrado y entrega completada",
       });
 
-      // 🔹 Eliminar visualmente de la lista
       setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
-
-      // 🔹 Actualizar resumen global
       await actualizarResumen();
 
-      showAlert("Completado", "El pedido fue entregado y pagado.", "success");
-    } catch (error: any) {
-      console.log("Error al cambiar estado:", error.response?.data || error.message);
-      showAlert(
-        "Error",
-        error.response?.data?.mensaje || "No se pudo marcar el pedido como entregado.",
-        "error"
-      );
+      showAlert("Completado", "El pedido fue entregado correctamente.", "success");
+    } catch (e: any) {
+      showAlert("Error", "No se pudo confirmar la entrega.", "error");
     }
   };
 
-  // === Estado de carga ===
+  // === LOADING ===
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View className="flex-1 justify-center items-center bg-grayLight">
         <ActivityIndicator size="large" color="#2563EB" />
-        <Text style={styles.loadingText}>Cargando pedidos por entregar...</Text>
+        <Text className="text-body-sm font-regular text-textSecondary mt-3">
+          Cargando pedidos por entregar...
+        </Text>
       </View>
     );
   }
 
-  // === Si no hay pedidos ===
+  // === SIN PEDIDOS ===
   if (pedidos.length === 0) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.text}>No hay pedidos por entregar</Text>
+      <View className="flex-1 justify-center items-center bg-grayLight">
+        <Text className="text-body font-medium text-textPrimary">
+          No hay pedidos por entregar
+        </Text>
       </View>
     );
   }
 
-  // === Render principal ===
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 px-4 py-4 bg-grayLight">
+
       {pedidos.map((p) => (
-        <View key={p.id} style={styles.card}>
-          {/* === Encabezado === */}
-          <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>
-                Pedido de {p.Cliente?.nombre?.trim()} {p.Cliente?.apellido_paterno?.trim()}
+        <View
+          key={p.id}
+          className="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-graySoft"
+        >
+          {/* HEADER */}
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text className="text-body font-medium text-textPrimary">
+                Pedido de {p.Cliente?.nombre} {p.Cliente?.apellido_paterno}
               </Text>
-              <Text style={styles.fechaText}>
+
+              <Text className="text-body-sm font-regular text-textSecondary mt-1">
                 {new Date(p.fecha).toLocaleDateString("es-MX")}
               </Text>
             </View>
 
-            <View style={styles.estadoBox}>
-              <Text style={styles.estadoText}>{p.EstadoPedido?.estado}</Text>
+            <View className="bg-primary px-3 py-1 rounded-full">
+              <Text className="text-[12px] font-medium text-white">
+                Por entregar
+              </Text>
             </View>
           </View>
 
-          {/* === Totales === */}
-          <Text style={styles.totalText}>
-            <Text style={styles.bold}>Total:</Text> ${p.total}{"   "}
-            <Text style={styles.bold}>Anticipo:</Text> ${p.anticipo}{"   "}
-            <Text style={styles.bold}>Restante:</Text> ${p.restante}
+          {/* TOTALES */}
+          <Text className="text-body font-regular text-textPrimary mt-2">
+            <Text className="font-medium">Total:</Text> ${p.total} ·{" "}
+            <Text className="font-medium">Anticipo:</Text> ${p.anticipo} ·{" "}
+            <Text className="font-medium">Restante:</Text> ${p.restante}
           </Text>
 
-          {/* === Lista de productos === */}
-          <View style={styles.productList}>
+          {/* PRODUCTOS */}
+          <View className="mt-4 space-y-2">
             {p.DetallePedidos.map((prod: any) => (
-              <View key={prod.id} style={styles.productItem}>
-                <Ionicons name="cube-outline" size={20} color="#2563EB" style={{ marginRight: 6 }} />
-                <Text style={styles.productText}>
-                  {prod.nombre_producto} - {prod.cantidad} x ${prod.precio}
+              <View
+                key={prod.id}
+                className="flex-row items-center p-3 rounded-xl bg-grayLight border border-graySoft"
+              >
+                <Ionicons name="cube-outline" size={20} color="#2563EB" />
+
+                <Text className="ml-3 text-body font-regular text-textPrimary">
+                  {prod.nombre_producto} · {prod.cantidad} × ${prod.precio}
                 </Text>
               </View>
             ))}
           </View>
 
-          {/* === Botón "Marcar como entregado" === */}
+          {/* BOTÓN ENTREGAR */}
           <TouchableOpacity
-            style={styles.btnEntregado}
             onPress={() => {
               setPedidoSeleccionado(p);
               setMontoPago(p.restante?.toString() || "0");
               setMetodoPago("Efectivo");
               setShowModal(true);
             }}
+            className="mt-4 bg-success py-3 rounded-xl flex-row items-center justify-center active:opacity-80"
           >
-            <Ionicons name="checkmark-done" size={18} color="white" />
-            <Text style={styles.btnText}>Marcar como entregado</Text>
+            <Ionicons name="checkmark-done" size={20} color="white" />
+            <Text className="text-white font-medium text-body ml-2">
+              Marcar como entregado
+            </Text>
           </TouchableOpacity>
         </View>
       ))}
 
-      {/* === MODAL DE CONFIRMACIÓN === */}
-      <Modal visible={showModal} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Confirmar pago final</Text>
-            <Text style={styles.modalText}>
+      {/* === MODAL === */}
+      <Modal visible={showModal} animationType="fade" transparent>
+        <View className="flex-1 bg-black/40 justify-center items-center px-6">
+          <View className="w-full bg-white p-6 rounded-2xl shadow-lg">
+
+            <Text className="text-h3 font-semibold text-textPrimary text-center mb-3">
+              Confirmar pago final
+            </Text>
+
+            <Text className="text-body font-regular text-textSecondary text-center mb-2">
               Restante por pagar: ${pedidoSeleccionado?.restante}
             </Text>
 
             <TextInput
-              style={styles.input}
-              placeholder="Monto pagado"
+              className="border border-graySoft bg-grayLight rounded-xl px-4 py-2 text-body font-regular text-textPrimary"
               keyboardType="numeric"
+              placeholder="Monto pagado"
               value={montoPago}
               onChangeText={setMontoPago}
             />
 
-            <Text style={styles.modalLabel}>Método de pago:</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: 10 }}>
+            <Text className="text-body font-medium text-textPrimary mt-4 mb-2 text-center">
+              Método de pago
+            </Text>
+
+            <View className="flex-row justify-around mt-1">
               {["Efectivo", "Transferencia", "Otro"].map((m) => (
                 <TouchableOpacity
                   key={m}
+                  className={`
+                    px-4 py-2 rounded-xl border
+                    ${
+                      metodoPago === m
+                        ? "bg-primary border-primary"
+                        : "bg-grayLight border-graySoft"
+                    }
+                  `}
                   onPress={() => setMetodoPago(m)}
-                  style={[
-                    styles.option,
-                    metodoPago === m && { backgroundColor: "#2563EB" },
-                  ]}
                 >
-                  <Text style={{ color: metodoPago === m ? "white" : "#111" }}>{m}</Text>
+                  <Text
+                    className={`${
+                      metodoPago === m
+                        ? "text-white font-medium"
+                        : "text-textPrimary font-regular"
+                    }`}
+                  >
+                    {m}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            {/* BOTONES */}
+            <View className="flex-row justify-between mt-6">
               <TouchableOpacity
-                style={[styles.option, { backgroundColor: "#E5E7EB" }]}
+                className="flex-1 py-3 bg-grayDark/30 rounded-xl mr-2"
                 onPress={() => setShowModal(false)}
               >
-                <Text>Cancelar</Text>
+                <Text className="text-center text-textPrimary text-body font-medium">
+                  Cancelar
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.option, { backgroundColor: "#16A34A" }]}
+                className="flex-1 py-3 bg-success rounded-xl ml-2"
                 onPress={async () => {
                   await marcarComoEntregado(
                     pedidoSeleccionado.id,
@@ -207,9 +242,12 @@ const PorEntregar: React.FC = () => {
                   setShowModal(false);
                 }}
               >
-                <Text style={{ color: "white" }}>Confirmar</Text>
+                <Text className="text-center text-white text-body font-medium">
+                  Confirmar
+                </Text>
               </TouchableOpacity>
             </View>
+
           </View>
         </View>
       </Modal>

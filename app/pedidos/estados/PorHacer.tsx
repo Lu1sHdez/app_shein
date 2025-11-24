@@ -120,7 +120,7 @@ const PorHacer: React.FC = () => {
     return (
       <View className="flex-1 justify-center items-center bg-grayLight">
         <ActivityIndicator size="large" color="#2563EB" />
-        <Text className="text-textSecondary mt-3">Cargando pedidos...</Text>
+        <Text className="font-regular text-textSecondary mt-3">Cargando pedidos...</Text>
       </View>
     );
   }
@@ -129,7 +129,7 @@ const PorHacer: React.FC = () => {
   if (pedidos.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-grayLight">
-        <Text className="text-textPrimary font-medium text-body">
+        <Text className="font-regular text-textPrimary font-medium text-body">
           No hay pedidos por hacer.
         </Text>
       </View>
@@ -163,15 +163,18 @@ const PorHacer: React.FC = () => {
                 Pedido - {p.Cliente?.nombre} {p.Cliente?.apellido_paterno}
               </Text>
 
-              {/* CHIP */}
+              {/* CHIP DE ESTADO */}
               <View
-                className={`flex-row items-center px-3 py-1 rounded-full ${
-                  estado === "Realizados"
-                    ? "bg-success text-white"
-                    : estado === "Parcial"
-                    ? "bg-yellow-400 text-black"
-                    : "bg-primary text-white"
-                }`}
+                className={`
+                  px-3 py-1 rounded-full flex-row items-center
+                  ${
+                    estado === "Realizados"
+                      ? "bg-success"
+                      : estado === "Parcial"
+                      ? "bg-yellow-400"
+                      : "bg-primary"
+                  }
+                `}
               >
                 <Ionicons
                   name={
@@ -182,27 +185,35 @@ const PorHacer: React.FC = () => {
                       : "time-outline"
                   }
                   size={14}
-                  color={estado === "Parcial" ? "#000" : "#fff"}
-                  className="mr-1"
+                  color={estado === "Parcial" ? "#000" : "#FFF"}
                 />
-                <Text className="text-[12px] font-medium capitalize">
+
+                <Text
+                  className={`
+                    text-[12px] ml-1
+                    ${estado === "Parcial" ? "text-black" : "text-white"}
+                    font-medium font-regular
+                  `}
+                >
                   {estado}
                 </Text>
               </View>
+
+
             </View>
 
             {/* CARGA SOLO PARA ESTE PEDIDO */}
             {loadingPedido === p.id && (
               <View className="mt-3 flex-row items-center">
                 <ActivityIndicator size={16} color="#2563EB" />
-                <Text className="text-primary text-body-sm ml-2">
+                <Text className="font-regular text-primary text-body-sm ml-2">
                   Guardando cambios...
                 </Text>
               </View>
             )}
 
             {/* FECHA */}
-            <Text className="text-textSecondary text-body-sm mt-1">
+            <Text className="text-textSecondary font-regular text-body-sm mt-1">
               Creado el{" "}
               <Text className="font-medium text-black">
                 {new Date(p.fecha).toLocaleDateString("es-MX")}
@@ -216,7 +227,7 @@ const PorHacer: React.FC = () => {
             </Text>
 
             {/* PROGRESO */}
-            <Text className="text-textSecondary text-body-sm mt-1">
+            <Text className="font-regular text-textSecondary text-body-sm mt-1">
               {completados} de {totalProductos} productos completados
             </Text>
 
@@ -226,7 +237,7 @@ const PorHacer: React.FC = () => {
                 <TouchableOpacity
                   key={prod.id}
                   disabled={loadingPedido === p.id}
-                  className={`flex-row items-center p-3 rounded-xl border ${
+                  className={`font-regular flex-row items-center p-3 rounded-xl border ${
                     prod.completado
                       ? "bg-success/10 border-success/50"
                       : "bg-grayLight border-graySoft"
@@ -246,7 +257,7 @@ const PorHacer: React.FC = () => {
                   />
 
                   <Text
-                    className={`ml-3 text-body text-textPrimary ${
+                    className={`ml-3 font-regular text-body text-textPrimary ${
                       prod.completado ? "line-through text-grayDark" : ""
                     }`}
                   >
@@ -268,13 +279,19 @@ const PorHacer: React.FC = () => {
 
     <TouchableOpacity
       onPress={() => navigation.navigate("RegistrarPedido")}
-      className="flex-row items-center justify-center bg-white/80 border border-primary py-3 mt-5 rounded-xl shadow-sm active:opacity-80"
+      className="
+        flex-row items-center justify-center
+        bg-white/80 border border-primary
+        py-3 mt-5 mb-10
+        rounded-xl shadow-sm active:opacity-80
+      "
     >
       <Ionicons name="add-circle-outline" size={22} color="#2563EB" />
       <Text className="text-primary font-medium text-body ml-2">
         Nuevo pedido
       </Text>
     </TouchableOpacity>
+
 
 
     </ScrollView>
