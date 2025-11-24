@@ -14,6 +14,7 @@ import Layout from "../../../components/Layout";
 import { Ionicons } from "@expo/vector-icons";
 import ActividadReciente from "../components/ActividadReciente";
 import Estados from "./estados/EstadosSeccion";
+import QuickAccess from "../components/QuickAccess";
 
 type DashboardScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -90,70 +91,15 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
         </View>
 
         {/* Contenido con scroll */}
-        <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
+        <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false} >
           <View className="p-6">
 
             <Estados />
 
-            {/* Sección de accesos rápidos */}
-            <View className="mb-8">
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-h3 font-semibold text-gray-900">Accesos rápidos</Text>
-                <View className="w-2 h-2 bg-blue-500 rounded-full" />
-              </View>
-
-              <View className="space-y-3 ">
-                {/* Fila principal de botones */}
-                <View className="flex-row gap-3">
-                  <QuickAccessButton
-                    onPress={() => navigation.navigate("RegistrarPedido")}
-                    icon="add-circle-outline"
-                    title="Nuevo pedido"
-                    variant="primary"
-                  />
-                  <QuickAccessButton
-                    onPress={() => navigation.navigate("Ventas")}
-                    icon="bar-chart-outline"
-                    title="Ventas"
-                    variant="secondary"
-                  />
-                  <QuickAccessButton
-                    onPress={toggleMoreOptions}
-                    icon="ellipsis-horizontal"
-                    title=""
-                    variant="secondary"
-                    small
-                  />
-                </View>
-
-                {/* Botones adicionales con animación */}
-                {showMoreOptions && (
-                  <Animated.View style={{ opacity: fadeAnim }} className="flex-row gap-3">
-                    <QuickAccessButton
-                      onPress={() => navigation.navigate("Clientes")}
-                      icon="people-outline"
-                      title="Clientes"
-                      variant="secondary"
-                    />
-                    <QuickAccessButton
-                      onPress={() => navigation.navigate("Reportes")}
-                      icon="document-text-outline"
-                      title="Reportes"
-                      variant="secondary"
-                    />
-                    <QuickAccessButton
-                      onPress={() => navigation.navigate("Perfil")}
-                      icon="person-circle-outline"
-                      title="Perfil"
-                      variant="secondary"
-                    />
-                  </Animated.View>
-                )}
-              </View>
-            </View>
+            <QuickAccess />
 
             {/* Separador decorativo */}
-            <View className="flex-row items-center justify-center mb-8">
+            <View className="flex-row items-center justify-center mb-10">
               <View className="h-px bg-gray-200 flex-1" />
               <Ionicons name="sparkles" size={16} color="#9CA3AF" className="mx-3" />
               <View className="h-px bg-gray-200 flex-1" />

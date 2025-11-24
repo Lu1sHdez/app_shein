@@ -1,22 +1,41 @@
+import React from "react";
 import { View } from "react-native";
 import Encabezado from "./Encabezado";
-import Pie from "./Pie";
-import { ReactNode } from "react";
+import GlobalBottomBar from "./GlobalBottomBar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  mostrarEncabezado?: boolean;
+  mostrarBottom?: boolean;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({
+  children,
+  mostrarEncabezado = true,
+  mostrarBottom = true,
+}: LayoutProps) {
+  const insets = useSafeAreaInsets();
+
+  // Altura dinámica para evitar que el contenido quede debajo de la barra inferior
+  const bottomPadding = mostrarBottom ? insets.bottom + 60 : 0;
+
   return (
     <View className="flex-1 bg-gray-200">
+      
+      {/* Encabezado */}
+      {mostrarEncabezado && <Encabezado />}
 
-      <Encabezado />
-
-      <View className="flex-1">
+      {/* Contenido */}
+      <View
+        style={{ paddingBottom: bottomPadding }}
+        className="flex-1"
+      >
         {children}
       </View>
 
+      {/* Barra inferior global */}
+      {mostrarBottom && <GlobalBottomBar />}
     </View>
   );
 }

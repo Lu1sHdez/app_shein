@@ -22,84 +22,73 @@ const Estados: React.FC = () => {
 
   if (loading) {
     return (
-      <View className="py-8 items-center justify-center">
-        <ActivityIndicator size="large" color="#6366F1" />
+      <View className="py-6 items-center justify-center">
+        <ActivityIndicator size="large" color="#2563EB" />
       </View>
     );
   }
 
-  // Función segura para calcular el total
-  const calcularTotal = () => {
-    return resumenData.reduce((total, item) => {
-      const value = parseInt(item.value?.toString() || '0');
-      return total + (isNaN(value) ? 0 : value);
-    }, 0);
-  };
+  const calcularTotal = () =>
+    resumenData.reduce((total, item) => total + Number(item.value || 0), 0);
 
-  // Función segura para calcular el porcentaje de la barra de progreso
   const calcularPorcentaje = (value: string | number) => {
-    const numValue = parseInt(value?.toString() || '0');
-    return Math.min(100, (isNaN(numValue) ? 0 : numValue / 50) * 100);
+    const n = parseInt(value?.toString() || "0");
+    return Math.min(100, (isNaN(n) ? 0 : n / 50) * 100);
   };
 
-  const EstadoCard = ({ item, index }: { item: ResumenPedido; index: number }) => (
+  const EstadoCard = ({ item }: { item: ResumenPedido }) => (
     <TouchableOpacity
-      activeOpacity={0.7}
-      className="w-[48%] mb-4"
+      activeOpacity={0.8}
+      className="w-[48%] mb-3"
       onPress={() => {
-        const screens: any = {
+        const screenMap: any = {
           "Por hacer": "PorHacer",
           "Realizados": "Realizados",
           "Por entregar": "PorEntregar",
           "Entregados": "Entregados",
         };
-        navigation.navigate("EstadoPedidos", {
-          screen: screens[item.title],
-        });
+        navigation.navigate("EstadoPedidos", { screen: screenMap[item.title] });
       }}
     >
-      <View 
-        className="bg-white rounded-2xl p-5 border-l-4 shadow-sm"
+      <View
+        className="bg-white rounded-xl p-4 border-l-4 shadow-sm"
         style={{ borderLeftColor: item.color }}
       >
-        {/* Header con icono */}
-        <View className="flex-row items-center justify-between mb-3">
-          <View 
-            className="w-12 h-12 rounded-2xl items-center justify-center"
-            style={{ backgroundColor: item.color + '20' }}
+        {/* Header */}
+        <View className="flex-row items-center justify-between mb-2">
+          <View
+            className="w-10 h-10 rounded-xl items-center justify-center"
+            style={{ backgroundColor: item.color + "22" }}
           >
-            <Ionicons name={item.icon as any} size={24} color={item.color} />
+            <Ionicons name={item.icon as any} size={20} color={item.color} />
           </View>
-          
-          {/* Indicador de estado */}
-          <View 
+
+          <View
             className="w-2 h-2 rounded-full"
             style={{ backgroundColor: item.color }}
           />
         </View>
 
-        {/* Contenido */}
-        <View className="space-y-1">
-          <Text className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
-            {item.title}
-          </Text>
-          
-          <Text className="text-h1 font-semibold text-black">
-            {item.value}
-          </Text>
-          
-          <Text className="text-gray-400 text-xs font-semibold">
-            {item.subtitle}
-          </Text>
-        </View>
+        {/* Títulos más compactos */}
+        <Text className="text-gray-500 text-[11px] font-medium uppercase tracking-wide">
+          {item.title}
+        </Text>
 
-        {/* Barra de progreso sutil */}
-        <View className="mt-3 w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-          <View 
+        <Text className="text-h2 font-semibold text-black leading-none mt-1">
+          {item.value}
+        </Text>
+
+        <Text className="text-gray-400 text-[11px] font-regular mt-0.5">
+          {item.subtitle}
+        </Text>
+
+        {/* Barra de progreso compacta */}
+        <View className="mt-2 w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+          <View
             className="h-full rounded-full"
-            style={{ 
+            style={{
               backgroundColor: item.color,
-              width: `${calcularPorcentaje(item.value)}%` 
+              width: `${calcularPorcentaje(item.value)}%`,
             }}
           />
         </View>
@@ -108,43 +97,44 @@ const Estados: React.FC = () => {
   );
 
   return (
-    <View className="mb-8">
-      {/* Header de la sección */}
-      <View className="flex-row items-center justify-between mb-6">
+    <View className="mb-6">
+      {/* Header */}
+      <View className="flex-row items-center justify-between mb-4">
         <View>
-          <Text className="text-h3 font-semibold text-gray-900">
+          <Text className="text-h3 font-semibold text-gray-900 leading-tight">
             Resumen de pedidos
           </Text>
-          <Text className="text-gray-500 font-regular text-base mt-1">
+          <Text className="text-gray-500 text-body-sm font-regular">
             Estado actual de tus pedidos
           </Text>
         </View>
-        
-        <TouchableOpacity 
-          onPress={actualizarResumen} 
-          className="px-4 py-2 bg-gray-100 rounded-full"
+
+        <TouchableOpacity
+          onPress={actualizarResumen}
+          className="p-2 bg-gray-100 rounded-xl"
         >
-          <Ionicons name="reload-outline" size={40} color="#2563EB" />
+          <Ionicons name="reload-outline" size={26} color="#2563EB" />
         </TouchableOpacity>
-
-
       </View>
 
+      {/* Tarjetas */}
       <View className="flex-row flex-wrap justify-between">
-        {resumenData.map((item: ResumenPedido, index: number) => (
-          <EstadoCard key={index} item={item} index={index} />
+        {resumenData.map((item, index) => (
+          <EstadoCard key={index} item={item} />
         ))}
       </View>
 
-      <View className="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-4">
-        <View className="flex-row justify-between items-center">
+      {/* Resumen total más compacto */}
+      <View className="mt-4 bg-indigo-50 rounded-xl p-3">
+        <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <Ionicons name="document-text-outline" size={30} color="#2563EB" />
-            <Text className="text-gray-700 font-semibold ml-2">
-              Resumen total
+            <Ionicons name="document-text-outline" size={22} color="#2563EB" />
+            <Text className="text-gray-700 font-medium ml-2 text-body-sm">
+              Total
             </Text>
           </View>
-          <Text className="text-gray-900 font-bold text-lg">
+
+          <Text className="text-gray-900 font-semibold text-body">
             {calcularTotal()} pedidos
           </Text>
         </View>

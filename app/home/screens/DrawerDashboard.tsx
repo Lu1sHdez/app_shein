@@ -76,7 +76,7 @@ const DrawerDashboard = () => {
   };
 
   return (
-    <View className="flex-1 pt-3 bg-white">
+    <View className="flex-1 bg-white">
       <Dashboard toggleDrawer={toggleDrawer} />
 
       {isOpen && (
@@ -92,62 +92,59 @@ const DrawerDashboard = () => {
         ]}
         className="bg-white shadow-lg z-20"
       >
-        {/* Header con más padding superior */}
-        <View className="flex-col items-center justify-center bg-gray-100 border-b border-gray-200 pt-12 pb-6">
-        <View className="flex-row items-center justify-start w-full px-4 mb-6">
+        <View className="bg-gray-100 border-b border-gray-200 pt-10 pb-3 items-center">
+          {/* Botón X flotante (no ocupa espacio) */}
           <TouchableOpacity
             onPress={toggleDrawer}
-            className="p-2 rounded-xl bg-gray-100 active:bg-gray-200"
+            className="absolute top-10 left-4 p-2 rounded-xl bg-gray-100 active:bg-gray-200 z-20"
           >
-            <Ionicons name="close" size={50} color="#333" />
+            <Ionicons name="close" size={40} color="#333" />
           </TouchableOpacity>
 
-          <View className="flex-1" />
-        </View>
-
-
+          {/* Imagen más arriba */}
           <TouchableOpacity
             onPress={() => {
               toggleDrawer();
               navigation.navigate("Perfil");
             }}
-            className="mb-4"
+            className="mt-2"
           >
-          <Image
-            source={
-              perfil && perfil.foto_perfil
-                ? { uri: perfil.foto_perfil }
-                : require("../../../assets/user.png")
-            }
-            className="w-32 h-32 rounded-full border-4 border-blue-500 bg-blue-100 shadow-lg"
-            resizeMode="cover"
-            onError={() => console.warn("Error cargando foto de perfil")}
-          />
-
-
+            <Image
+              source={
+                perfil && perfil.foto_perfil
+                  ? { uri: perfil.foto_perfil }
+                  : require("../../../assets/user.png")
+              }
+              className="w-28 h-28 rounded-full border-4 border-blue-500 bg-blue-100 shadow-lg"
+              resizeMode="cover"
+            />
           </TouchableOpacity>
 
           {perfil ? (
-            <View className="items-center px-4">
+            <View className="items-center px-4 mt-3">
               <View className="bg-blue-100 px-4 py-1.5 rounded-full">
-                <Text className="text-primary font-regular text-body tracking-wide">
+                <Text className="text-primary font-light text-body-sm tracking-wide">
                   {perfil.rol}
                 </Text>
               </View>
-              <Text className="text-2xl font-medium text-gray-900 mt-4 text-center">
+
+              <Text className="text-2xl font-medium text-gray-900 mt-3 text-center">
                 {(perfil.nombre && perfil.apellido_paterno)
                   ? `${perfil.nombre} ${perfil.apellido_paterno}`
                   : perfil.nombre_usuario}
               </Text>
 
-              <Text className="text-body font-regular text-primary text-center">{perfil.correo}</Text>
+              <Text className="text-body font-regular text-primary text-center">
+                {perfil.correo}
+              </Text>
             </View>
           ) : (
             <ActivityIndicator size="small" color="#6366F1" />
           )}
-        </View>
+          </View>
 
-        <ScrollView contentContainerStyle={{ paddingVertical: 5 }} className="p-8 font space-y-4">
+
+        <ScrollView contentContainerStyle={{ paddingVertical: 5, paddingBottom: 150  }} className="p-8 font space-y-4">
           {[
             { name: "Inicio", icon: "home-outline", activeIcon: "home" },
             { name: "Pedidos", icon: "bag-handle-outline", activeIcon: "bag-handle" },
@@ -170,8 +167,8 @@ const DrawerDashboard = () => {
                 color={activeItem === item.name ? "#2563EB" : "#4B5563"}
               />
               <Text
-                className={`text-h3 font-regular ${
-                  activeItem === item.name ? "text-blue-600 font-semibold" : "text-gray-700"
+                className={`text-body font-regular ${
+                  activeItem === item.name ? "text-blue-600 font-regular" : "text-gray-700"
                 }`}
               >
                 {item.name}
@@ -196,7 +193,7 @@ const DrawerDashboard = () => {
             ) : (
               <>
                 <Ionicons name="log-out-outline" size={25} color="#E61610" />
-                <Text className="text-h3 text-red-600 font-semibold">Cerrar sesión</Text>
+                <Text className="text-body text-red-600 font-semibold">Cerrar sesión</Text>
               </>
             )}
           </TouchableOpacity>
