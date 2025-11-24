@@ -30,10 +30,9 @@ export default function Inicio() {
           }}
         />
 
-        {/* TÍTULO ADAPTABLE */}
         <Text
           style={{ fontSize: titleSize }}
-          className="font-medium uppercase text-primary text-center"
+          className="font-semibold uppercase text-primary text-center"
         >
           Bienvenido a Punto Shein
         </Text>

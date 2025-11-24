@@ -18,13 +18,12 @@ type DashboardScreenNavigationProp = StackNavigationProp<
 
 const Estados: React.FC = () => {
   const navigation = useNavigation<DashboardScreenNavigationProp>();
-  const { resumenData, loading } = usePedidos();
+  const { resumenData, loading, actualizarResumen } = usePedidos();
 
   if (loading) {
     return (
       <View className="py-8 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-        <Text className="mt-3 text-gray-600 font-medium">Cargando resumen...</Text>
       </View>
     );
   }
@@ -81,15 +80,15 @@ const Estados: React.FC = () => {
 
         {/* Contenido */}
         <View className="space-y-1">
-          <Text className="text-gray-500 text-sm font-medium uppercase tracking-wide">
+          <Text className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
             {item.title}
           </Text>
           
-          <Text className="text-h1 font-medium text-black">
+          <Text className="text-h1 font-semibold text-black">
             {item.value}
           </Text>
           
-          <Text className="text-gray-400 text-xs font-medium">
+          <Text className="text-gray-400 text-xs font-semibold">
             {item.subtitle}
           </Text>
         </View>
@@ -113,28 +112,35 @@ const Estados: React.FC = () => {
       {/* Header de la sección */}
       <View className="flex-row items-center justify-between mb-6">
         <View>
-          <Text className="text-2xl font-medium text-gray-900">
+          <Text className="text-h3 font-semibold text-gray-900">
             Resumen de pedidos
           </Text>
           <Text className="text-gray-500 font-regular text-base mt-1">
             Estado actual de tus pedidos
           </Text>
         </View>
+        
+        <TouchableOpacity 
+          onPress={actualizarResumen} 
+          className="px-4 py-2 bg-gray-100 rounded-full"
+        >
+          <Ionicons name="reload-outline" size={40} color="#2563EB" />
+        </TouchableOpacity>
+
+
       </View>
 
-      {/* Grid de tarjetas */}
       <View className="flex-row flex-wrap justify-between">
         {resumenData.map((item: ResumenPedido, index: number) => (
           <EstadoCard key={index} item={item} index={index} />
         ))}
       </View>
 
-      {/* Stats resumen */}
       <View className="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-4">
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center">
-            <Ionicons name="stats-chart" size={20} color="#6366F1" />
-            <Text className="text-gray-700 font-medium ml-2">
+            <Ionicons name="document-text-outline" size={30} color="#2563EB" />
+            <Text className="text-gray-700 font-semibold ml-2">
               Resumen total
             </Text>
           </View>

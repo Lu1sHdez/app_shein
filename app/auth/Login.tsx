@@ -113,7 +113,7 @@ export default function Login({ navigation }: any) {
 
               {/* Título */}
               <Text
-                className="text-primary uppercase font-medium text-center mb-1"
+                className="text-primary uppercase font-semibold text-center mb-1"
                 style={{ fontSize: titleSize }}
               >
                 Iniciar sesión
@@ -149,7 +149,7 @@ export default function Login({ navigation }: any) {
                       setEmail(t);
                       if (errors.email) setErrors({ ...errors, email: undefined });
                     }}
-                    className="font-medium flex-1 ml-3 text-textPrimary"
+                    className="font-regular flex-1 ml-3 text-textPrimary"
                     placeholderTextColor="#A0A0A0"
                   />
                 </View>
@@ -179,7 +179,7 @@ export default function Login({ navigation }: any) {
                       setPassword(t);
                       if (errors.password) setErrors({ ...errors, password: undefined });
                     }}
-                    className="font-medium flex-1 ml-3 text-textPrimary"
+                    className="font-regular flex-1 ml-3 text-textPrimary"
                     placeholderTextColor="#A0A0A0"
                     secureTextEntry={!mostrarContra}
                   />

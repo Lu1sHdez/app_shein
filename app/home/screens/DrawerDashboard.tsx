@@ -112,7 +112,7 @@ const DrawerDashboard = () => {
             <>
               <Text style={menuStyles.userRole}>{perfil.rol}</Text>
               <Text style={menuStyles.userName}>
-                {perfil.nombre || perfil.nombre_usuario}
+              {(perfil.nombre && perfil.apellido_materno) ? `${perfil.nombre} ${perfil.apellido_paterno}` : perfil.nombre_usuario}
               </Text>
               <Text style={menuStyles.userEmail}>{perfil.correo}</Text>
             </>

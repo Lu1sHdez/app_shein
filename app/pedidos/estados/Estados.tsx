@@ -79,7 +79,7 @@ const Estados = () => {
               >
                 <Text
                   className={`
-                    text-sm font-medium
+                    text-sm font-semibold
                     ${estadoActivo === tab.key 
                       ? 'text-blue-600' 
                       : 'text-gray-500'

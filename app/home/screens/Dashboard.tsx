@@ -62,9 +62,9 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
         small ? "p-3 w-12" : "p-4 flex-1 min-w-[120px]"
       } ${variant === "primary" ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-white"} active:opacity-80 shadow-sm`}
     >
-      <Ionicons name={icon} size={20} color={variant === "primary" ? "#2563EB" : "#4B5563"} />
+      <Ionicons name={icon} size={20} color={variant === "primary" ? "#2563EB" : "#2563EB"} />
       {!small && (
-        <Text className={`ml-2 font-semibold text-sm ${variant === "primary" ? "text-blue-600" : "text-gray-700"}`}>
+        <Text className={`ml-2 font-regular text-sm ${variant === "primary" ? "text-blue-600" : "text-gray-700"}`}>
           {title}
         </Text>
       )}
@@ -84,7 +84,7 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
           </TouchableOpacity>
 
           <View className="flex-1 items-center">
-            <Text className="text-2xl font-medium text-gray-900">Inicio</Text>
+            <Text className="text-2xl font-semibold text-gray-900">Inicio</Text>
             <Text className="text-gray-500 font-regular text-sm mt-1">Resumen general de tu actividad</Text>
           </View>
         </View>
@@ -92,17 +92,17 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
         {/* Contenido con scroll */}
         <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
           <View className="p-6">
-            {/* Sección Estados */}
+
             <Estados />
 
             {/* Sección de accesos rápidos */}
             <View className="mb-8">
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-xl font-medium text-gray-900">Accesos rápidos</Text>
+                <Text className="text-h3 font-semibold text-gray-900">Accesos rápidos</Text>
                 <View className="w-2 h-2 bg-blue-500 rounded-full" />
               </View>
 
-              <View className="space-y-3">
+              <View className="space-y-3 ">
                 {/* Fila principal de botones */}
                 <View className="flex-row gap-3">
                   <QuickAccessButton

@@ -67,8 +67,9 @@ const RegistrarPedido: React.FC = () => {
         {/* Header */}
         <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
           <View className="flex-1">
-            <Text className="text-2xl text-center font-bold text-gray-900">Nuevo Pedido</Text>
-            <Text className="text-gray-500 text-center text-sm mt-1">
+            <Text className="text-h2 text-center font-semibold text-black">Nuevo Pedido</Text>
+
+            <Text className="text-gray-500 font-regular text-center text-sm mt-1">
               Registra un nuevo pedido
             </Text>
           </View>
@@ -77,7 +78,7 @@ const RegistrarPedido: React.FC = () => {
         <View className="flex-1 bg-gray-50">
           {/* === Datos del cliente === */}
           <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-            <Text className="text-lg font-semibold text-gray-900 mb-3">Datos del cliente</Text>
+            <Text className="text-lg font-semibold text-black mb-3">Datos del cliente</Text>
             <SeleccionarCliente onClienteSeleccionado={setClienteSeleccionado} />
             {errores.cliente && (
               <Text className="text-red-500 text-sm mt-2">{errores.cliente}</Text>
@@ -86,7 +87,7 @@ const RegistrarPedido: React.FC = () => {
 
           {/* === Productos seleccionados === */}
           <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-            <Text className="text-lg font-semibold text-gray-900 mb-3">Productos seleccionados</Text>
+            <Text className="text-lg font-semibold text-black mb-3">Productos seleccionados</Text>
             <ListaProductosPedido
               productos={productos}
               setProductos={setProductos}
@@ -100,7 +101,7 @@ const RegistrarPedido: React.FC = () => {
           {/* === Resumen del pedido === */}
           {productos.length > 0 && (
             <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-              <Text className="text-lg font-semibold text-gray-900 mb-3">Resumen del pedido</Text>
+              <Text className="text-lg font-semibold text-black mb-3">Resumen del pedido</Text>
               
               <View className="flex-row items-center mb-2">
                 <Ionicons name="person-outline" size={18} color="#2563EB" />

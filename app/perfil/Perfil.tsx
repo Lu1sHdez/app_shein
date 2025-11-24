@@ -79,7 +79,7 @@ const Perfil: React.FC = () => {
         {/* Header */}
         <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
           <View className="flex-1">
-            <Text className="text-2xl text-center font-medium text-gray-900">Mi Perfil</Text>
+            <Text className="text-2xl text-center font-semibold text-gray-900">Mi Perfil</Text>
             <Text className="text-gray-500 text-center text-sm mt-1">
               Información de tu cuenta
             </Text>
@@ -106,7 +106,7 @@ const Perfil: React.FC = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-2xl font-medium text-gray-900 mt-4 text-center">
+              <Text className="text-2xl font-semibold text-gray-900 mt-4 text-center">
                 {perfil.nombre} {perfil.apellido_paterno} {perfil.apellido_materno}
               </Text>
               
@@ -123,7 +123,7 @@ const Perfil: React.FC = () => {
               <View className="p-4 border-b border-gray-100">
                 <View className="flex-row items-center mb-2">
                   <Ionicons name="person" size={20} color="#6B7280" />
-                  <Text className="text-gray-500 font-medium text-sm ml-2">
+                  <Text className="text-gray-500 font-semibold text-sm ml-2">
                     Nombre de usuario
                   </Text>
                 </View>
@@ -136,7 +136,7 @@ const Perfil: React.FC = () => {
               <View className="p-4 border-b border-gray-100">
                 <View className="flex-row items-center mb-2">
                   <Ionicons name="mail" size={20} color="#6B7280" />
-                  <Text className="text-gray-500 font-medium text-sm ml-2">
+                  <Text className="text-gray-500 font-semibold text-sm ml-2">
                     Correo electrónico
                   </Text>
                 </View>
@@ -149,7 +149,7 @@ const Perfil: React.FC = () => {
               <View className="p-4">
                 <View className="flex-row items-center mb-2">
                   <Ionicons name="call" size={20} color="#6B7280" />
-                  <Text className="text-gray-500 font-medium text-sm ml-2">
+                  <Text className="text-gray-500 font-semibold text-sm ml-2">
                     Teléfono
                   </Text>
                 </View>

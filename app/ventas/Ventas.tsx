@@ -39,7 +39,7 @@ const Ventas = () => {
           {/* Header */}
           <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
             <View className="flex-1">
-              <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
+              <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
               <Text className="text-gray-500 text-center text-sm mt-1">
                 Reportes y estadísticas
               </Text>
@@ -47,7 +47,7 @@ const Ventas = () => {
           </View>
           <View className="flex-1 items-center justify-center py-12">
             <ActivityIndicator size="large" color="#2563EB" />
-            <Text className="text-gray-600 font-medium mt-4 text-center">
+            <Text className="text-gray-600 font-semibold mt-4 text-center">
               Cargando información de ventas...
             </Text>
           </View>
@@ -63,7 +63,7 @@ const Ventas = () => {
           {/* Header */}
           <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
             <View className="flex-1">
-              <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
+              <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
               <Text className="text-gray-500 text-center text-sm mt-1">
                 Reportes y estadísticas
               </Text>
@@ -71,7 +71,7 @@ const Ventas = () => {
           </View>
           <View className="flex-1 items-center justify-center py-12">
             <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-            <Text className="text-gray-500 font-medium mt-4 text-center">
+            <Text className="text-gray-500 font-semibold mt-4 text-center">
               No hay datos disponibles en este momento.
             </Text>
           </View>
@@ -132,7 +132,7 @@ const Ventas = () => {
       `}
     >
       <Text className={`
-        font-medium text-sm
+        font-semibold text-sm
         ${filtro === periodo ? 'text-white' : 'text-gray-600'}
       `}>
         {label}
@@ -146,8 +146,8 @@ const Ventas = () => {
         {/* Header */}
         <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
           <View className="flex-1">
-            <Text className="text-2xl text-center font-medium text-gray-900">Ventas</Text>
-            <Text className="text-gray-500 text-center text-sm mt-1">
+            <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
+            <Text className="text-gray-500 font-regular text-center text-sm mt-1">
               Reportes y estadísticas
             </Text>
           </View>
@@ -162,32 +162,32 @@ const Ventas = () => {
                 <Ionicons name="stats-chart" size={24} color="#2563EB" />
               </View>
               <View>
-                <Text className="text-xl font-medium text-gray-900">Resumen General</Text>
-                <Text className="text-gray-500 text-sm">Reporte de ventas</Text>
+                <Text className="text-xl font-semibold text-gray-900">Resumen General</Text>
+                <Text className="text-gray-500 font-regular text-sm">Reporte de ventas</Text>
               </View>
             </View>
 
             {/* Métricas */}
             <View className="space-y-3">
               <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
-                <Text className="text-gray-600 font-medium">Tipo de reporte</Text>
+                <Text className="text-gray-600 font-semibold">Tipo de reporte</Text>
                 <View className="bg-primary/10 px-3 py-1 rounded-full">
-                  <Text className="text-primary font-medium text-sm uppercase">
+                  <Text className="text-primary font-semibold text-sm uppercase">
                     {data.tipoReporte || "GENERAL"}
                   </Text>
                 </View>
               </View>
 
               <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
-                <Text className="text-gray-600 font-medium">Total vendido</Text>
-                <Text className="text-primary text-lg font-medium">
+                <Text className="text-gray-600 font-semibold">Total vendido</Text>
+                <Text className="text-primary text-lg font-semibold">
                   ${data.totalVentas}
                 </Text>
               </View>
 
               <View className="flex-row justify-between items-center py-2">
-                <Text className="text-gray-600 font-medium">Ganancia neta</Text>
-                <Text className="text-green-600 text-lg font-medium">
+                <Text className="text-gray-600 font-semibold">Ganancia neta</Text>
+                <Text className="text-green-600 text-lg font-semibold">
                   ${data.totalGanancia}
                 </Text>
               </View>
@@ -196,7 +196,7 @@ const Ventas = () => {
 
           {/* === FILTROS DE PERIODO === */}
           <View className="mx-4 mt-6 mb-4">
-            <Text className="text-gray-900 font-bold text-lg mb-3">Filtrar por período</Text>
+            <Text className="text-gray-900 font-semibold text-lg mb-3">Filtrar por período</Text>
             <View className="flex-row justify-between space-x-2">
               <FiltroButton periodo="dia" label="Hoy" />
               <FiltroButton periodo="semana" label="Semana" />
@@ -219,7 +219,7 @@ const Ventas = () => {
               <View className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                 <View className="flex-row items-center">
                   <Ionicons name="calendar-outline" size={16} color="#2563EB" />
-                  <Text className="text-blue-800 font-medium ml-2 text-sm">
+                  <Text className="text-blue-800 font-semibold ml-2 text-sm">
                     {mostrarFechaCompleta(new Date().toString())}
                   </Text>
                 </View>
@@ -233,7 +233,7 @@ const Ventas = () => {
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Ionicons name="information-circle-outline" size={18} color="#6B7280" />
-                  <Text className="text-gray-700 font-medium ml-2 text-sm">
+                  <Text className="text-gray-700 font-semibold ml-2 text-sm">
                     Resumen del período
                   </Text>
                 </View>

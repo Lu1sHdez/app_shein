@@ -30,6 +30,8 @@ module.exports = {
       fontFamily: {
         regular: ["Poppins_400Regular"],
         medium: ["Poppins_500Medium"],
+        semibold: ["Poppins_600SemiBold"],
+        light: ["Poppins_300Light"],
       },
       fontSize: {
         'h1': '2.5rem',

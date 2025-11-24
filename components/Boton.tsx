@@ -31,7 +31,7 @@ export default function Boton({ title, onPress, className = "", loading = false 
       {loading ? (
         <ActivityIndicator size="small" color="#fff" />
       ) : (
-        <Text className="text-white uppercase text-h3 font-medium tracking-wide">
+        <Text className="text-white uppercase text-h3 font-semibold tracking-wide">
           {title}
         </Text>
       )}
