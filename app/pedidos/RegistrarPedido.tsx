@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
-  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -37,9 +36,12 @@ const RegistrarPedido: React.FC = () => {
       setProductos([]);
       setModalPagoVisible(false);
       navigation.goBack();
-    } catch (error) {
-      console.error("Error al actualizar resumen:", error);
-      showAlert("Error", "El pedido se guardó, pero no se pudo actualizar el resumen.", "warning");
+    } catch {
+      showAlert(
+        "Error",
+        "El pedido se guardó, pero no se pudo actualizar el resumen.",
+        "warning"
+      );
     }
   };
 
@@ -51,7 +53,7 @@ const RegistrarPedido: React.FC = () => {
     }
 
     if (productos.length === 0) {
-      nuevosErrores.productos = "Agrega al menos un producto antes de guardar el pedido.";
+      nuevosErrores.productos = "Agrega al menos un producto antes de guardar.";
     }
 
     if (Object.keys(nuevosErrores).length > 0) {
@@ -71,69 +73,80 @@ const RegistrarPedido: React.FC = () => {
           subtitulo="Registra un nuevo pedido"
         />
 
-        <View className="flex-1 bg-gray-50">
+        {/* === SCROLL GENERAL (como dashboard) === */}
+        <ScrollView
+          className="flex-1 bg-gray-50"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 50 }}
+        >
           {/* === Datos del cliente === */}
-          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-            <Text className="text-lg font-semibold text-black mb-3">Datos del cliente</Text>
+          <View className="bg-white rounded-2xl mx-4 mt-4 p-5 shadow-sm border border-gray-200">
+            <Text className="text-lg font-semibold text-black mb-3">
+              Datos del cliente
+            </Text>
+
             <SeleccionarCliente onClienteSeleccionado={setClienteSeleccionado} />
+
             {errores.cliente && (
-              <Text className="text-red-500 text-sm mt-2">{errores.cliente}</Text>
+              <Text className="text-red-500 font-regular text-sm mt-2">{errores.cliente}</Text>
             )}
           </View>
 
-          {/* === Productos seleccionados === */}
-          <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-            <Text className="text-lg font-semibold text-black mb-3">Productos seleccionados</Text>
+          {/* === Productos === */}
+          <View className="bg-white rounded-2xl mx-4 mt-4 p-5 shadow-sm border border-gray-200">
+            <Text className="text-lg font-semibold text-black mb-3">
+              Productos seleccionados
+            </Text>
+
             <ListaProductosPedido
               productos={productos}
               setProductos={setProductos}
               clienteSeleccionado={clienteSeleccionado}
             />
+
             {errores.productos && (
-              <Text className="text-red-500 text-sm mt-2">{errores.productos}</Text>
+              <Text className="text-red-500 font-regular text-sm mt-2">{errores.productos}</Text>
             )}
           </View>
 
-          {/* === Resumen del pedido === */}
+          {/* === Resumen === */}
           {productos.length > 0 && (
-            <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-              <Text className="text-lg font-semibold text-black mb-3">Resumen del pedido</Text>
-              
+            <View className="bg-white rounded-2xl mx-4 mt-4 p-5 shadow-sm border border-gray-200">
+              <Text className="text-lg font-semibold text-black mb-3">
+                Resumen del pedido
+              </Text>
+
               <View className="flex-row items-center mb-2">
                 <Ionicons name="person-outline" size={18} color="#2563EB" />
-                <Text className="text-gray-700 ml-2 text-base">
+                <Text className="ml-2 font-regular text-gray-700 text-base">
                   Cliente:{" "}
                   {clienteSeleccionado
                     ? `${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido_paterno}`
                     : "No seleccionado"}
                 </Text>
               </View>
-              
+
               <View className="flex-row items-center mb-2">
                 <Ionicons name="pricetag-outline" size={18} color="#2563EB" />
-                <Text className="text-gray-700 ml-2 text-base">
+                <Text className="font-regular ml-2 text-gray-700 text-base">
                   Productos: {productos.length}
                 </Text>
               </View>
-              
+
               <View className="flex-row items-center">
                 <Ionicons name="cash-outline" size={18} color="#2563EB" />
-                <Text className="text-gray-700 ml-2 text-base">
+                <Text className="font-regular ml-2 text-gray-700 text-base">
                   Total: ${total.toFixed(2)}
                 </Text>
               </View>
             </View>
           )}
 
-        <View className="bg-white rounded-2xl mx-4 my-2 p-5 shadow-sm border border-gray-200">
-          <Boton
-            title="Continuar con pago"
-            onPress={continuarConPago}
-            loading={loading}
-          />
-        </View>
-
-        </View>
+          {/* === Botón continuar === */}
+          <View className="bg-white rounded-2xl mx-4 mt-4 mb-6 p-5 shadow-sm border border-gray-200">
+            <Boton title="Continuar con pago" onPress={continuarConPago} loading={loading} />
+          </View>
+        </ScrollView>
 
         {/* === Modal de pago === */}
         <PagoPedidoModal

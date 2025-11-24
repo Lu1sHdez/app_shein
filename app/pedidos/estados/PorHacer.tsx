@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { colors } from "../../../constants/theme";
 import {
   View,
   Text,
@@ -12,7 +11,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { styles } from "./styles/porHacer";
 import { API_URL } from "../../../constants/config";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -21,7 +19,10 @@ import { useAlert } from "../../context/AlertContext";
 import { usePedidos } from "../../context/PedidosContext";
 
 // Habilitar animaciones en Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -37,14 +38,20 @@ const PorHacer: React.FC = () => {
 
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPedido, setLoadingPedido] = useState<string | null>(null);
 
-  // === Obtener pedidos "Por hacer" ===
+  // === Obtener pedidos ===
   const fetchPedidos = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/app/pedidos/estado/Por%20hacer`);
+      const response = await axios.get(
+        `${API_URL}/api/app/pedidos/estado/Por%20hacer`
+      );
       setPedidos(response.data);
     } catch (error: any) {
-      console.log("Error al obtener pedidos:", error.response?.data || error.message);
+      console.log(
+        "Error al obtener pedidos:",
+        error.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }
@@ -54,16 +61,17 @@ const PorHacer: React.FC = () => {
     fetchPedidos();
   }, []);
 
-  // === Alternar estado de producto ===
+  // === Toggle de producto ===
   const toggleProductoCompletado = async (
     detalleId: string,
     completadoActual: boolean,
     pedidoId: string
   ) => {
     try {
+      setLoadingPedido(pedidoId);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-      // Actualización local del producto
+      // Actualización local instantánea
       setPedidos((prev) =>
         prev.map((pedido) =>
           pedido.id === pedidoId
@@ -77,46 +85,42 @@ const PorHacer: React.FC = () => {
         )
       );
 
-      // Actualiza en backend
+      // Backend
       const { data } = await axios.put(
         `${API_URL}/api/app/pedidos/detalle/${detalleId}/completado`,
         { completado: !completadoActual }
       );
 
-      // Recalcular estado visual (según backend)
-      setPedidos((prev) =>
-        prev.map((p) =>
-          p.id === pedidoId
-            ? { ...p, EstadoPedido: { ...p.EstadoPedido, estado: data.pedido.EstadoPedido?.estado || p.EstadoPedido.estado } }
-            : p
-        )
-      );
+      const estadoFinal = data.pedido.EstadoPedido?.estado;
 
-      // Si todos están completos → eliminar del listado
-      const pedidoActualizado = data.pedido.EstadoPedido?.estado;
-      if (pedidoActualizado === "Realizados") {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
-        showAlert("Completado", "El pedido ha pasado a 'Realizados'.", "success");
-      } else if (pedidoActualizado === "Parcial") {
-        showAlert("Progreso guardado", "El pedido está parcialmente completado.", "info");
+      // Mensajes UI
+      if (estadoFinal === "Realizados") {
+        setPedidos((p) => p.filter((x) => x.id !== pedidoId));
+        showAlert("Completado", "Pedido movido a 'Realizados'.", "success");
+      } else if (estadoFinal === "Parcial") {
+        showAlert("Actualizado", "Pedido parcialmente completado.", "info");
       } else {
-        showAlert("Actualizado", "Se actualizó el estado del producto.", "info");
+        showAlert("Actualizado", "Producto actualizado.", "info");
       }
 
       await actualizarResumen();
     } catch (error: any) {
-      console.log("Error al actualizar producto:", error.response?.data || error.message);
+      console.log(
+        "Error al actualizar producto:",
+        error.response?.data || error.message
+      );
       showAlert("Error", "No se pudo actualizar el producto.", "error");
+    } finally {
+      setLoadingPedido(null);
     }
   };
 
-  // === Estado de carga ===
+  // === Estado: cargando ===
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#4F4F4F" />
-        <Text style={{ marginTop: 10, color: "#4F4F4F" }}>Cargando pedidos...</Text>
+      <View className="flex-1 justify-center items-center bg-grayLight">
+        <ActivityIndicator size="large" color="#2563EB" />
+        <Text className="text-textSecondary mt-3">Cargando pedidos...</Text>
       </View>
     );
   }
@@ -124,8 +128,8 @@ const PorHacer: React.FC = () => {
   // === Sin pedidos ===
   if (pedidos.length === 0) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "#4F4F4F", fontFamily: "Poppins-Medium" }}>
+      <View className="flex-1 justify-center items-center bg-grayLight">
+        <Text className="text-textPrimary font-medium text-body">
           No hay pedidos por hacer.
         </Text>
       </View>
@@ -134,11 +138,13 @@ const PorHacer: React.FC = () => {
 
   // === Render principal ===
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 px-4 py-4 bg-grayLight">
       {pedidos.map((p) => {
-        // Contar productos completados
         const totalProductos = p.DetallePedidos.length;
-        const completados = p.DetallePedidos.filter((prod: any) => prod.completado).length;
+        const completados = p.DetallePedidos.filter(
+          (prod: any) => prod.completado
+        ).length;
+
         const estado =
           completados === totalProductos
             ? "Realizados"
@@ -147,102 +153,130 @@ const PorHacer: React.FC = () => {
             : "Por hacer";
 
         return (
-          <View key={p.id} style={styles.card}>
-            {/* === Encabezado === */}
-            <View style={styles.cardHeader}>
-              <View style={styles.headerLeft}>
-                <Text style={styles.cardTitle}>
-                  Pedido - {p.Cliente?.nombre?.trim()} {p.Cliente?.apellido_paterno?.trim()}
+          <View
+            key={p.id}
+            className="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-graySoft"
+          >
+            {/* HEADER */}
+            <View className="flex-row items-center justify-between">
+              <Text className="text-body font-medium text-textPrimary">
+                Pedido - {p.Cliente?.nombre} {p.Cliente?.apellido_paterno}
+              </Text>
+
+              {/* CHIP */}
+              <View
+                className={`flex-row items-center px-3 py-1 rounded-full ${
+                  estado === "Realizados"
+                    ? "bg-success text-white"
+                    : estado === "Parcial"
+                    ? "bg-yellow-400 text-black"
+                    : "bg-primary text-white"
+                }`}
+              >
+                <Ionicons
+                  name={
+                    estado === "Realizados"
+                      ? "checkmark-done"
+                      : estado === "Parcial"
+                      ? "alert-circle-outline"
+                      : "time-outline"
+                  }
+                  size={14}
+                  color={estado === "Parcial" ? "#000" : "#fff"}
+                  className="mr-1"
+                />
+                <Text className="text-[12px] font-medium capitalize">
+                  {estado}
                 </Text>
               </View>
-              <View style={styles.headerRight}>
-                <View
-                  style={[
-                    styles.estadoCapsula,
-                    estado === "Realizados"
-                      ? styles.estadoListo
-                      : estado === "Parcial"
-                      ? styles.estadoParcial
-                      : styles.estadoPendiente,
-                  ]}
-                >
-                  <Ionicons
-                    name={
-                      estado === "Realizados"
-                        ? "checkmark-done"
-                        : estado === "Parcial"
-                        ? "alert-circle-outline"
-                        : "time-outline"
-                    }
-                    size={14}
-                    color={colors.white}
-                    style={{ marginRight: 5 }}
-                  />
-                  <Text style={styles.estadoTexto}>{estado}</Text>
-                </View>
             </View>
 
-            </View>
+            {/* CARGA SOLO PARA ESTE PEDIDO */}
+            {loadingPedido === p.id && (
+              <View className="mt-3 flex-row items-center">
+                <ActivityIndicator size={16} color="#2563EB" />
+                <Text className="text-primary text-body-sm ml-2">
+                  Guardando cambios...
+                </Text>
+              </View>
+            )}
 
-            {/* === Fecha === */}
-            <Text style={styles.fechaText}>
-              Creado el {new Date(p.fecha).toLocaleDateString("es-MX")}
+            {/* FECHA */}
+            <Text className="text-textSecondary text-body-sm mt-1">
+              Creado el{" "}
+              <Text className="font-medium text-black">
+                {new Date(p.fecha).toLocaleDateString("es-MX")}
+              </Text>
             </Text>
 
-            {/* === Totales === */}
-            <Text style={styles.totalText}>
-              <Text style={styles.bold}>Total:</Text> ${p.total}{"   "}
-              <Text style={styles.bold}>Pendiente:</Text> ${p.restante}
+            {/* TOTALES */}
+            <Text className="text-textPrimary text-body mt-2">
+              <Text className="font-medium">Total:</Text> ${p.total} ·{" "}
+              <Text className="font-medium">Pendiente:</Text> ${p.restante}
             </Text>
 
-            {/* === Barra de progreso textual === */}
-            <Text style={{ fontFamily: "Poppins-Regular", color: "#6B7280", marginTop: 4 }}>
-              {completados} de {totalProductos} productos realizados
+            {/* PROGRESO */}
+            <Text className="text-textSecondary text-body-sm mt-1">
+              {completados} de {totalProductos} productos completados
             </Text>
 
-            {/* === Lista de productos === */}
-            <View style={styles.productList}>
+            {/* LISTA DE PRODUCTOS */}
+            <View className="mt-4 space-y-2">
               {p.DetallePedidos.map((prod: any) => (
                 <TouchableOpacity
                   key={prod.id}
-                  style={[styles.productItem, prod.completado && { opacity: 0.6 }]}
+                  disabled={loadingPedido === p.id}
+                  className={`flex-row items-center p-3 rounded-xl border ${
+                    prod.completado
+                      ? "bg-success/10 border-success/50"
+                      : "bg-grayLight border-graySoft"
+                  } ${loadingPedido === p.id ? "opacity-50" : ""}`}
                   onPress={() =>
-                    toggleProductoCompletado(prod.id, prod.completado, p.id)
+                    toggleProductoCompletado(
+                      prod.id,
+                      prod.completado,
+                      p.id
+                    )
                   }
                 >
                   <Ionicons
                     name={prod.completado ? "checkbox" : "square-outline"}
                     size={22}
-                    color={prod.completado ? "#22C55E" : "#9CA3AF"}
+                    color={prod.completado ? "#27AE60" : "#6B7280"}
                   />
+
                   <Text
-                    style={[
-                      styles.productText,
-                      prod.completado && styles.productTachado,
-                    ]}
+                    className={`ml-3 text-body text-textPrimary ${
+                      prod.completado ? "line-through text-grayDark" : ""
+                    }`}
                   >
-                    {prod.nombre_producto} - {prod.cantidad} x ${prod.precio}
+                    {prod.nombre_producto} · {prod.cantidad} × ${prod.precio}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            {/* === Botón detalles === */}
-            <TouchableOpacity style={styles.detallesBtn}>
-              <Text style={styles.detallesText}>Detalles</Text>
+            {/* BOTÓN DETALLES */}
+            <TouchableOpacity className="mt-4 items-end">
+              <Text className="text-primary font-medium text-body-sm">
+                Ver detalles
+              </Text>
             </TouchableOpacity>
           </View>
         );
       })}
 
-      {/* === Nuevo pedido === */}
-      <TouchableOpacity
-        style={styles.nuevoPedidoBtn}
-        onPress={() => navigation.navigate("RegistrarPedido")}
-      >
-        <Ionicons name="add-circle-outline" size={22} color={styles.nuevoPedidoIcon.color} />
-        <Text style={styles.nuevoPedidoText}>Nuevo pedido</Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.navigate("RegistrarPedido")}
+      className="flex-row items-center justify-center bg-white/80 border border-primary py-3 mt-5 rounded-xl shadow-sm active:opacity-80"
+    >
+      <Ionicons name="add-circle-outline" size={22} color="#2563EB" />
+      <Text className="text-primary font-medium text-body ml-2">
+        Nuevo pedido
+      </Text>
+    </TouchableOpacity>
+
+
     </ScrollView>
   );
 };

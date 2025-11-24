@@ -68,9 +68,9 @@ const GlobalBottomBar = () => {
       />
 
       <Button
-        icon="people-outline"
-        label="Clientes"
-        onPress={() => navigation.navigate("Clientes")}
+        icon="bag-handle-outline"
+        label="Pedidos"
+        onPress={() => navigation.navigate("Pedidos")}
       />
 
       <Button

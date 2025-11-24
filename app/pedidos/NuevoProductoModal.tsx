@@ -9,9 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useAlert } from "../context/AlertContext";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./styles/listaProductos";
+import { useAlert } from "../context/AlertContext";
 
 type Producto = {
   id: string;
@@ -22,21 +21,14 @@ type Producto = {
   cantidad: number;
 };
 
-interface Props {
-  visible: boolean;
-  onClose: () => void;
-  onAgregar: (nuevoProducto: Producto) => void;
-  productoInicial?: Producto | null;
-}
-
-const NUEVO_PRODUCTO_TALLAS = ["Sin talla", "CH", "M", "G", "XG"];
+const TALLAS = ["Sin talla", "CH", "M", "G", "XG"];
 
 const NuevoProductoModal = ({
   visible,
   onClose,
   onAgregar,
   productoInicial = null,
-}: Props) => {
+}: any) => {
   const [form, setForm] = useState<Producto>({
     id: "",
     nombre: "",
@@ -46,86 +38,18 @@ const NuevoProductoModal = ({
     cantidad: 1,
   });
 
-  const [errores, setErrores] = useState<{ [key: string]: string }>({});
-  const [ganancia, setGanancia] = useState<number>(0);
-  const [total, setTotal] = useState<number>(0);
+  const [errores, setErrores] = useState<any>({});
+  const [ganancia, setGanancia] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  const { showAlert } = useAlert(); 
+  const { showAlert } = useAlert();
 
   useEffect(() => {
-    if (visible) {
-      if (productoInicial) {
-        setForm({
-          id: productoInicial.id,
-          nombre: productoInicial.nombre,
-          talla: productoInicial.talla || "Sin talla",
-          costo: productoInicial.costo,
-          precio: productoInicial.precio,
-          cantidad: productoInicial.cantidad,
-        });
-      } else {
-        setForm({
-          id: "",
-          nombre: "",
-          talla: "Sin talla",
-          costo: NaN,
-          precio: NaN,
-          cantidad: 1,
-        });
-      }
-      setErrores({});
-    }
-  }, [visible, productoInicial]);
-
-  // === Cálculos dinámicos ===
-  useEffect(() => {
-    if (!isNaN(form.costo) && !isNaN(form.precio)) {
-      setGanancia(form.precio - form.costo);
-      setTotal(form.precio * (form.cantidad || 1));
+    if (productoInicial) {
+      setForm({
+        ...productoInicial,
+      });
     } else {
-      setGanancia(0);
-      setTotal(0);
-    }
-  }, [form.costo, form.precio, form.cantidad]);
-
-  // === Validación ===
-  const validarCampos = () => {
-    const nuevosErrores: { [key: string]: string } = {};
-    if (!form.nombre.trim()) nuevosErrores.nombre = "El nombre del producto es obligatorio.";
-    if (isNaN(form.costo)) nuevosErrores.costo = "Debes ingresar el costo de compra.";
-    else if (form.costo > 50000) nuevosErrores.costo = "El costo parece demasiado alto.";
-    if (isNaN(form.precio)) nuevosErrores.precio = "Debes ingresar el precio de venta.";
-    else if (form.precio < form.costo)
-      nuevosErrores.precio = "El precio no puede ser menor que el costo.";
-    else if (form.precio > form.costo * 10)
-      nuevosErrores.precio = "El precio parece demasiado alto.";
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };
-
-  const agregarProducto = () => {
-    if (!validarCampos()) {
-      showAlert("Campos incompletos", "Por favor revisa los datos ingresados.", "warning");
-      return;
-    }
-
-    try {
-      const nuevo = {
-        ...form,
-        id: Date.now().toString(),
-        total: form.precio * form.cantidad,
-      };
-
-      onAgregar(nuevo);
-      showAlert(
-        "Producto agregado",
-        `Se ha agregado "${form.nombre}" correctamente al pedido.`,
-        "success"
-      );
-
-      onClose();
-
-      // Limpieza
       setForm({
         id: "",
         nombre: "",
@@ -134,139 +58,159 @@ const NuevoProductoModal = ({
         precio: NaN,
         cantidad: 1,
       });
-    } catch (error) {
-      console.error("Error al agregar producto:", error);
-      showAlert("Error", "No se pudo agregar el producto. Intenta nuevamente.", "error");
     }
+    setErrores({});
+  }, [visible]);
+
+  useEffect(() => {
+    if (!isNaN(form.costo) && !isNaN(form.precio)) {
+      setGanancia(form.precio - form.costo);
+      setTotal(form.precio * form.cantidad);
+    }
+  }, [form.costo, form.precio, form.cantidad]);
+
+  const validar = () => {
+    const e: any = {};
+    if (!form.nombre.trim()) e.nombre = "Ingresa un nombre.";
+    if (isNaN(form.costo)) e.costo = "Ingresa el costo.";
+    if (isNaN(form.precio)) e.precio = "Ingresa el precio.";
+    if (form.precio < form.costo) e.precio = "El precio no puede ser menor.";
+    setErrores(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleChange = (campo: string, valor: any) => {
+  const agregar = () => {
+    if (!validar()) {
+      showAlert("Campos incompletos", "Revisa los datos ingresados.", "warning");
+      return;
+    }
+    onAgregar({
+      ...form,
+      id: productoInicial ? form.id : Date.now().toString(),
+    });
+
+    showAlert("Producto agregado", `${form.nombre} añadido al pedido.`, "success");
+    onClose();
+  };
+
+  const change = (campo: string, valor: any) => {
     setForm((prev) => ({ ...prev, [campo]: valor }));
-    if (errores[campo]) setErrores((prev) => ({ ...prev, [campo]: "" }));
   };
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalOverlay}>
+      <View className="flex-1 bg-black/40 justify-center items-center px-5">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={styles.modalContainer}
+          className="w-full bg-white rounded-2xl p-5 max-h-[85%]"
         >
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.modalTitle}>Nuevo producto</Text>
+            <Text className="text-lg font-semibold text-textPrimary text-center mb-4">
+              Nuevo producto
+            </Text>
 
             {/* NOMBRE */}
-            <Text style={styles.label}>Nombre del producto</Text>
+            <Text className="text-textPrimary mb-1 font-medium">Nombre del producto</Text>
             <TextInput
-              style={[styles.input, errores.nombre && styles.inputError]}
-              placeholder="Ejemplo: Blusa blanca, pantalón, etc."
+              className={`
+                border font-regular rounded-xl px-4 py-3 text-body bg-white
+                ${errores.nombre ? "border-error bg-errorContainer" : "border-graySoft"}
+              `}
+              placeholder="Ej: Blusa blanca"
               value={form.nombre}
-              onChangeText={(text) => handleChange("nombre", text)}
+              onChangeText={(t) => change("nombre", t)}
             />
-            {errores.nombre && <Text style={styles.errorText}>{errores.nombre}</Text>}
+            {errores.nombre && <Text className="text-error text-sm">{errores.nombre}</Text>}
 
-            {/* TALLA */}
-            <Text style={styles.label}>Selecciona talla (si aplica)</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-              {NUEVO_PRODUCTO_TALLAS.map((talla) => (
+            {/* TALLAS */}
+            <Text className="text-textPrimary mt-4 mb-1 font-medium">Talla</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {TALLAS.map((t) => (
                 <TouchableOpacity
-                  key={talla}
-                  style={{
-                    backgroundColor: form.talla === talla ? "#2563EB" : "#E5E7EB",
-                    paddingVertical: 8,
-                    paddingHorizontal: 16,
-                    borderRadius: 20,
-                    marginRight: 8,
-                    marginBottom: 8,
-                  }}
-                  onPress={() => handleChange("talla", talla)}
+                  key={t}
+                  className={`
+                    px-4 py-2 rounded-full
+                    ${form.talla === t ? "bg-primary" : "bg-grayLight"}
+                  `}
+                  onPress={() => change("talla", t)}
                 >
                   <Text
-                    style={{
-                      color: form.talla === talla ? "#FFF" : "#333",
-                      fontWeight: form.talla === talla ? "bold" : "normal",
-                    }}
+                    className={`${
+                      form.talla === t ? "text-white font-semibold" : "text-black"
+                    }`}
                   >
-                    {talla}
+                    {t}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             {/* COSTO */}
-            <Text style={styles.label}>Costo (precio de compra)</Text>
+            <Text className="text-textPrimary mt-4 mb-1 font-medium">Costo</Text>
             <TextInput
-              style={[styles.input, errores.costo && styles.inputError]}
-              keyboardType="numeric"
-              placeholder="Ejemplo: 150"
-              value={isNaN(form.costo) ? "" : form.costo.toString()}
-              onChangeText={(text) =>
-                handleChange("costo", parseFloat(text) || NaN)
-              }
+              className={`
+                border font-regular rounded-xl px-4 py-3 bg-white text-body
+                ${errores.costo ? "border-error bg-errorContainer" : "border-graySoft"}
+              `}
+              placeholder="Ej: 120"
+              keyboardType="number-pad"
+              value={isNaN(form.costo) ? "" : String(form.costo)}
+              onChangeText={(t) => change("costo", parseFloat(t) || NaN)}
             />
-            {errores.costo && <Text style={styles.errorText}>{errores.costo}</Text>}
+            {errores.costo && <Text className="text-error text-sm">{errores.costo}</Text>}
 
             {/* PRECIO */}
-            <Text style={styles.label}>Precio de venta</Text>
+            <Text className="text-textPrimary mt-4 mb-1 font-medium">Precio venta</Text>
             <TextInput
-              style={[styles.input, errores.precio && styles.inputError]}
-              keyboardType="numeric"
-              placeholder="Ejemplo: 250"
-              value={isNaN(form.precio) ? "" : form.precio.toString()}
-              onChangeText={(text) =>
-                handleChange("precio", parseFloat(text) || NaN)
-              }
+              className={`
+                border font-regular rounded-xl px-4 py-3 bg-white
+                ${errores.precio ? "border-error bg-errorContainer" : "border-graySoft"}
+              `}
+              placeholder="Ej: 250"
+              keyboardType="number-pad"
+              value={isNaN(form.precio) ? "" : String(form.precio)}
+              onChangeText={(t) => change("precio", parseFloat(t) || NaN)}
             />
-            {errores.precio && <Text style={styles.errorText}>{errores.precio}</Text>}
+            {errores.precio && <Text className="text-error text-sm">{errores.precio}</Text>}
 
             {/* CANTIDAD */}
-            <Text style={styles.label}>Cantidad</Text>
-            <View style={styles.qtyRow}>
-              <TouchableOpacity
-                onPress={() =>
-                  handleChange("cantidad", Math.max(1, form.cantidad - 1))
-                }
-              >
-                <Ionicons name="remove-circle-outline" size={26} color="#2563EB" />
+            <Text className="text-textPrimary mt-4 mb-1 font-medium">Cantidad</Text>
+            <View className="flex-row items-center justify-between px-5 py-3 bg-grayLight rounded-xl">
+              <TouchableOpacity onPress={() => change("cantidad", Math.max(1, form.cantidad - 1))}>
+                <Ionicons name="remove-circle-outline" size={28} color="#2563EB" />
               </TouchableOpacity>
-              <Text style={styles.qtyText}>{form.cantidad}</Text>
-              <TouchableOpacity
-                onPress={() => handleChange("cantidad", form.cantidad + 1)}
-              >
-                <Ionicons name="add-circle-outline" size={26} color="#2563EB" />
+              <Text className="text-lg font-semibold">{form.cantidad}</Text>
+              <TouchableOpacity onPress={() => change("cantidad", form.cantidad + 1)}>
+                <Ionicons name="add-circle-outline" size={28} color="#2563EB" />
               </TouchableOpacity>
             </View>
 
             {/* RESUMEN */}
-            <View
-              style={{
-                marginTop: 14,
-                padding: 10,
-                borderRadius: 10,
-                backgroundColor: "#F0F4FF",
-              }}
-            >
-              <Text style={{ fontWeight: "bold", color: "#2563EB" }}>
+            <View className="bg-suave/40 p-4 mt-4 rounded-xl">
+              <Text className="text-primary font-semibold">
                 Ganancia: ${ganancia.toFixed(2)}
               </Text>
-              <Text style={{ color: "#333" }}>
-                Total (venta × cantidad): ${total.toFixed(2)}
+              <Text className="text-textPrimary">
+                Total: ${total.toFixed(2)}
               </Text>
             </View>
 
             {/* BOTONES */}
-            <View style={styles.buttonRow}>
+            <View className="flex-row justify-between mt-5">
               <TouchableOpacity
-                style={[styles.button, styles.addBtn]}
-                onPress={agregarProducto}
+                className="flex-1 bg-primary py-3 rounded-xl mr-2"
+                onPress={agregar}
               >
-                <Text style={styles.buttonTextAdd}>Agregar</Text>
+                <Text className="text-white text-center font-medium text-body">Guardar</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={[styles.button, styles.cancelBtn]}
+                className="flex-1 bg-white py-3 rounded-xl ml-2 border border-graySoft"
                 onPress={onClose}
               >
-                <Text style={styles.buttonTextCancel}>Cancelar</Text>
+                <Text className="text-textPrimary text-center font-medium text-body">
+                  Cancelar
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

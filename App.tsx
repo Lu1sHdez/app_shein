@@ -11,7 +11,8 @@ import RegistrarPedido from './app/pedidos/RegistrarPedido';
 import { AlertProvider } from './app/context/AlertContext';
 import Estados from './app/pedidos/estados/Estados';
 import Clientes from './app/clients/Clientes';
-import Ventas from "./app/ventas/Ventas"
+import Ventas from "./app/ventas/Ventas";
+import Pedidos from "./app/pedidos/estados/Estados"
 import {PedidosProvider } from "./app/context/PedidosContext"
 import Reportes from "./app/reportes/Reportes"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -103,6 +104,11 @@ export default function App() {
             <Stack.Screen
               name="Ventas"
               component={Ventas}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Pedidos"
+              component={Pedidos}
               options={{ headerShown: false }}
             />
 

@@ -9,11 +9,10 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { useAlert } from "../context/AlertContext";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { useAlert } from "../context/AlertContext";
 import { API_URL } from "../../constants/config";
-import { styles } from "./styles/pagoPedido";
 import CustomButton from "../../components/Button";
 
 type Props = {
@@ -32,12 +31,13 @@ const PagoPedidoModal: React.FC<Props> = ({
   onPedidoGuardado,
 }) => {
   const { showAlert } = useAlert();
+
   const [loading, setLoading] = useState(false);
-  const [opcionPago, setOpcionPago] = useState<
-    "anticipo" | "total" | "personalizado"
-  >("anticipo");
+  const [opcionPago, setOpcionPago] = useState<"anticipo" | "total" | "personalizado">(
+    "anticipo"
+  );
   const [montoPersonalizado, setMontoPersonalizado] = useState("");
-  const [errorMonto, setErrorMonto] = useState<string>(""); 
+  const [errorMonto, setErrorMonto] = useState("");
 
   const total = productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
 
@@ -49,21 +49,23 @@ const PagoPedidoModal: React.FC<Props> = ({
 
   const restante = total - anticipo;
 
-  // === Validación del monto ===
+  // ==== VALIDAR MONTO ====
   const validarMonto = () => {
     let error = "";
+    const valor = parseFloat(montoPersonalizado);
+
     if (opcionPago === "personalizado") {
-      const valor = parseFloat(montoPersonalizado);
       if (isNaN(valor)) error = "Ingresa un monto válido.";
       else if (valor < total * 0.5)
-        error = `El anticipo no puede ser menor al 50% del total ($${(total * 0.5).toFixed(2)})`;
-      else if (valor > total)
-        error = `El anticipo no puede ser mayor al total ($${total.toFixed(2)})`;
+        error = `Debe ser mínimo el 50% ($${(total * 0.5).toFixed(2)})`;
+      else if (valor > total) error = `No puede ser mayor a $${total.toFixed(2)}`;
     }
+
     setErrorMonto(error);
     return error === "";
   };
 
+  // ==== GUARDAR PEDIDO ====
   const guardarPedido = async () => {
     if (!clienteSeleccionado) {
       showAlert("Sin cliente", "Selecciona un cliente antes de continuar.", "warning");
@@ -71,7 +73,7 @@ const PagoPedidoModal: React.FC<Props> = ({
     }
 
     if (productos.length === 0) {
-      showAlert("Sin productos", "Agrega productos antes de registrar el pedido.", "error");
+      showAlert("Sin productos", "Agrega productos al pedido.", "error");
       return;
     }
 
@@ -84,7 +86,6 @@ const PagoPedidoModal: React.FC<Props> = ({
         clienteId: clienteSeleccionado.id,
         productos: productos.map((p) => ({
           nombre: p.nombre,
-          incluyeTalla: p.incluyeTalla,
           talla: p.talla || null,
           costo: p.costo,
           precio: p.precio,
@@ -101,70 +102,76 @@ const PagoPedidoModal: React.FC<Props> = ({
             : "Monto personalizado",
       };
 
-      console.log("Enviando pedido:", payload);
-      const response = await axios.post(`${API_URL}/api/app/pedidos/registrar`, payload);
+      await axios.post(`${API_URL}/api/app/pedidos/registrar`, payload);
 
       showAlert(
         "Éxito",
-        `Pedido registrado correctamente para ${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido_paterno}. ` +
-          (
-            opcionPago === "anticipo"
-              ? `Se registró correctamente el anticipo del 50% ($${anticipo.toFixed(2)}).`
-              : opcionPago === "total"
-              ? `Se registró correctamente el pago total de $${total.toFixed(2)}.`
-              : `Se registró correctamente el monto personalizado de $${anticipo.toFixed(2)}.`
-          ),
+        `Pedido guardado para ${clienteSeleccionado.nombre}.`,
         "success"
       );
-      
-      console.log("Respuesta del backend:", response.data);
 
       onPedidoGuardado();
       onClose();
     } catch (error: any) {
-      console.error("Error al guardar pedido:", error);
-      const msg = error.response?.data?.mensaje || "No se pudo guardar el pedido.";
-      showAlert("Error", msg, "error");
+      showAlert("Error", "No se pudo guardar el pedido.", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} transparent animationType="slide">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.overlay}
+        className="flex-1 justify-center items-center bg-black/40 px-4"
       >
-        <View style={styles.container}>
+        <View className="w-full bg-white rounded-2xl p-6 max-h-[85%] shadow-xl">
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.title}>Registrar pago</Text>
+            {/* === TÍTULO === */}
+            <Text className="text-center text-h3 font-semibold text-textPrimary mb-4">
+              Registrar pago
+            </Text>
 
-            <Text style={styles.label}>Total del pedido</Text>
-            <Text style={styles.totalText}>${total.toFixed(2)}</Text>
-
-            <Text style={styles.label}>Selecciona una opción de pago:</Text>
+            {/* === TOTAL === */}
+            <Text className="text-body font-medium text-textPrimary">Total</Text>
+            <Text className="text-primary font-semibold text-xl mb-4">
+              ${total.toFixed(2)}
+            </Text>
 
             {/* === OPCIONES === */}
+            <Text className="text-body font-medium text-textPrimary mb-1">
+              Selecciona el tipo de pago:
+            </Text>
+
+            {/* OPCIÓN: ANTICIPO */}
             <TouchableOpacity
-              style={[styles.option, opcionPago === "anticipo" && styles.optionSelected]}
+              className={`flex-row items-center p-3 rounded-xl border mt-2 ${
+                opcionPago === "anticipo"
+                  ? "border-primary bg-suave/40"
+                  : "border-graySoft bg-grayLight"
+              }`}
               onPress={() => {
                 setOpcionPago("anticipo");
                 setErrorMonto("");
               }}
             >
               <Ionicons
-                name={
-                  opcionPago === "anticipo" ? "radio-button-on" : "radio-button-off"
-                }
-                size={20}
+                name={opcionPago === "anticipo" ? "radio-button-on" : "radio-button-off"}
+                size={22}
                 color="#2563EB"
               />
-              <Text style={styles.optionText}>Dejar el 50% de anticipo</Text>
+              <Text className="font-regular ml-3 text-body text-textPrimary">
+                Anticipo del 50%
+              </Text>
             </TouchableOpacity>
 
+            {/* OPCIÓN: TOTAL */}
             <TouchableOpacity
-              style={[styles.option, opcionPago === "total" && styles.optionSelected]}
+              className={`flex-row items-center p-3 rounded-xl border mt-2 ${
+                opcionPago === "total"
+                  ? "border-primary bg-suave/40"
+                  : "border-graySoft bg-grayLight"
+              }`}
               onPress={() => {
                 setOpcionPago("total");
                 setErrorMonto("");
@@ -172,18 +179,19 @@ const PagoPedidoModal: React.FC<Props> = ({
             >
               <Ionicons
                 name={opcionPago === "total" ? "radio-button-on" : "radio-button-off"}
-                size={20}
-                color="#2563EB" 
-                
+                size={22}
+                color="#2563EB"
               />
-              <Text style={styles.optionText}>Pagar el total completo</Text>
+              <Text className="font-regular ml-3 text-body text-textPrimary">Pago completo</Text>
             </TouchableOpacity>
 
+            {/* OPCIÓN: PERSONALIZADO */}
             <TouchableOpacity
-              style={[
-                styles.option,
-                opcionPago === "personalizado" && styles.optionSelected,
-              ]}
+              className={`flex-row items-center p-3 rounded-xl border mt-2 ${
+                opcionPago === "personalizado"
+                  ? "border-primary bg-suave/40"
+                  : "border-graySoft bg-grayLight"
+              }`}
               onPress={() => setOpcionPago("personalizado")}
             >
               <Ionicons
@@ -192,20 +200,23 @@ const PagoPedidoModal: React.FC<Props> = ({
                     ? "radio-button-on"
                     : "radio-button-off"
                 }
-                size={20}
+                size={22}
                 color="#2563EB"
               />
-              <Text style={styles.optionText}>Ingresar monto personalizado</Text>
+              <Text className="font-regular ml-3 text-body text-textPrimary">
+                Monto personalizado
+              </Text>
             </TouchableOpacity>
 
-            {/* === CAMPO PERSONALIZADO === */}
+            {/* INPUT PERSONALIZADO */}
             {opcionPago === "personalizado" && (
               <>
                 <TextInput
-                  style={[
-                    styles.input,
-                    errorMonto ? { borderColor: "red"} : {},
-                  ]}
+                  className={`font-regular mt-3 p-3 rounded-xl border text-body ${
+                    errorMonto
+                      ? "border-error bg-errorContainer"
+                      : "border-graySoft bg-white"
+                  }`}
                   keyboardType="numeric"
                   placeholder="Ejemplo: 300"
                   value={montoPersonalizado}
@@ -215,25 +226,26 @@ const PagoPedidoModal: React.FC<Props> = ({
                   }}
                   onBlur={validarMonto}
                 />
-                {errorMonto ? (
-                  <Text style={{ color: "red", fontSize: 13, marginTop: 4 }}>
-                    {errorMonto}
-                  </Text>
-                ) : null}
+
+                {errorMonto !== "" && (
+                  <Text className="text-error font-regular text-body-sm mt-1">{errorMonto}</Text>
+                )}
               </>
             )}
 
-            {/* === INFO FINAL === */}
-            <View style={{ marginTop: 12 }}>
-              <Text style={styles.infoText}>
-                Anticipo: ${anticipo.toFixed(2)} {"\n"}
+            {/* INFO FINAL */}
+            <View className="bg-grayLight rounded-xl p-3 mt-4">
+              <Text className="font-regular text-textPrimary text-body">
+                Anticipo: ${anticipo.toFixed(2)}
+              </Text>
+              <Text className="font-regular text-textPrimary text-body">
                 Restante: ${restante.toFixed(2)}
               </Text>
             </View>
 
-            {/* === BOTONES === */}
-            <View style={styles.actionsRow}>
-              <View style={{ flex: 1, marginRight: 8 }}>
+            {/* BOTONES */}
+            <View className="flex-row mt-6 mb-3">
+              <View className="flex-1 mr-2">
                 <CustomButton
                   title={loading ? "Guardando..." : "Confirmar"}
                   onPress={guardarPedido}
@@ -242,12 +254,8 @@ const PagoPedidoModal: React.FC<Props> = ({
                 />
               </View>
 
-              <View style={{ flex: 1, marginLeft: 8 }}>
-                <CustomButton
-                  title="Cancelar"
-                  onPress={onClose}
-                  variant="secondary"
-                />
+              <View className="flex-1 ml-2">
+                <CustomButton title="Cancelar" onPress={onClose} variant="secondary" />
               </View>
             </View>
           </ScrollView>
