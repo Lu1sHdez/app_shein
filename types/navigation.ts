@@ -10,6 +10,7 @@ export type RootStackParamList = {
   Ventas: undefined;
   Reportes:undefined;
   Pedidos:undefined;
+  Actividades:undefined;
 
 
   EstadoPedidos: { screen?: "PorHacer" | "Realizados" | "PorEntregar" | "Entregados" };

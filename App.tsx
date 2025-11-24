@@ -16,6 +16,7 @@ import Pedidos from "./app/pedidos/estados/Estados"
 import {PedidosProvider } from "./app/context/PedidosContext"
 import Reportes from "./app/reportes/Reportes"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TodasLasActividades from "./app/home/components/TodasLasActividades";
 
 import Perfil from './app/perfil/Perfil';
 
@@ -121,6 +122,11 @@ export default function App() {
             <Stack.Screen
               name="RegistrarPedido"
               component={RegistrarPedido}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Actividades"
+              component={TodasLasActividades}
               options={{ headerShown: false }}
             />
 
