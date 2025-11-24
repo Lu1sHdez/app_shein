@@ -18,7 +18,7 @@ export default function Inicio() {
 
   return (
     <Layout>
-      <View className="flex-1 items-center justify-start pt-10 px-6 bg-white">
+      <View className="flex-1 items-center justify-start pt-2 px-6 bg-white">
 
         {/* LOGO ADAPTABLE */}
         <Image
@@ -33,7 +33,7 @@ export default function Inicio() {
         {/* TÍTULO ADAPTABLE */}
         <Text
           style={{ fontSize: titleSize }}
-          className="font-medium text-primary text-center mt-4"
+          className="font-medium uppercase text-primary text-center"
         >
           Bienvenido a Punto Shein
         </Text>

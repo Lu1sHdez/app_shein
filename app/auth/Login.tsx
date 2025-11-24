@@ -113,7 +113,7 @@ export default function Login({ navigation }: any) {
 
               {/* Título */}
               <Text
-                className="text-primary font-medium text-center mb-1"
+                className="text-primary uppercase font-medium text-center mb-1"
                 style={{ fontSize: titleSize }}
               >
                 Iniciar sesión

@@ -85,7 +85,7 @@ const Estados: React.FC = () => {
             {item.title}
           </Text>
           
-          <Text className="text-2xl font-bold text-gray-900">
+          <Text className="text-h1 font-medium text-black">
             {item.value}
           </Text>
           

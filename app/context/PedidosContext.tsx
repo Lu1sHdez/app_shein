@@ -59,7 +59,7 @@ import React, {
             ...item,
             subtitle:
               item.title === "Por hacer"
-                ? "Pendientes por atender"
+                ? "Pendientes por hacer"
                 : item.title === "Realizados"
                 ? "Pedidos confirmados"
                 : item.title === "Por entregar"
