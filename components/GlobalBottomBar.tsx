@@ -46,7 +46,7 @@ const GlobalBottomBar = () => {
       style={{
         paddingBottom: insets.bottom + 6,
       }}
-      className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg flex-row justify-between px-2 py-2 z-50"
+      className="absolute bottom-0 left-0 right-0 bg-blue-100 border-t border-gray-200 shadow-lg flex-row justify-between px-2 py-2 z-50"
     >
       <Button
         icon="home-outline"

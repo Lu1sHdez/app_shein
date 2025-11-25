@@ -24,6 +24,7 @@ const Reportes = () => {
     fetchData();
   }, []);
 
+  // Estado de carga
   if (loading) {
     return (
       <Layout>
@@ -42,6 +43,7 @@ const Reportes = () => {
     );
   }
 
+  // Estado sin datos
   if (!data) {
     return (
       <Layout>
@@ -56,6 +58,7 @@ const Reportes = () => {
     );
   }
 
+  // Contenido cargado
   return (
     <Layout>
       <HeaderGlobal 
@@ -68,8 +71,7 @@ const Reportes = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
-
-        {/* 🔹 CARD: Ventas Totales */}
+        {/* CARD: Ventas Totales */}
         <View className="bg-white rounded-2xl p-6 mx-4 mt-4 shadow-sm border border-gray-100">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center">
@@ -84,13 +86,12 @@ const Reportes = () => {
               ${data.totalVentas}
             </Text>
           </View>
-
           <Text className="text-body-sm text-gray-500 font-regular">
             {data.crecimientoMensual} respecto al mes anterior
           </Text>
         </View>
 
-        {/* 🔹 CARD: Ganancias */}
+        {/* CARD: Ganancias */}
         <View className="bg-white rounded-2xl p-6 mx-4 mt-4 shadow-sm border border-gray-100">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center">
@@ -101,18 +102,16 @@ const Reportes = () => {
                 Ganancia Neta
               </Text>
             </View>
-
             <Text className="text-h2 font-bold text-green-600">
               ${data.totalGanancia}
             </Text>
           </View>
-
           <Text className="text-body-sm text-gray-500 font-regular">
             Ticket promedio: ${data.ticketPromedio}
           </Text>
         </View>
 
-        {/* 🔹 CARD: Pedidos */}
+        {/* CARD: Pedidos */}
         <View className="bg-white rounded-2xl p-6 mx-4 mt-4 shadow-sm border border-gray-100">
           <View className="flex-row items-center mb-4">
             <View className="bg-blue-50 p-2 rounded-xl">
@@ -140,7 +139,7 @@ const Reportes = () => {
           </View>
         </View>
 
-        {/* 🔹 CARD: Clientes */}
+        {/* CARD: Clientes */}
         <View className="bg-white rounded-2xl p-6 mx-4 mt-4 shadow-sm border border-gray-100">
           <View className="flex-row items-center mb-4">
             <View className="bg-blue-50 p-2 rounded-xl">
@@ -168,7 +167,7 @@ const Reportes = () => {
           </View>
         </View>
 
-        {/* 🔹 CARD: Top Productos */}
+        {/* CARD: Top Productos */}
         <View className="bg-white rounded-2xl p-6 mx-4 mt-4 mb-4 shadow-sm border border-gray-100">
           <View className="flex-row items-center mb-4">
             <View className="bg-amber-50 p-2 rounded-xl">

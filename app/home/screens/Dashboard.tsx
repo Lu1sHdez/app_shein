@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import HeaderGlobal from "../../../components/HeaderGlobal";
 import Layout from "../../../components/Layout";
 import { Ionicons } from "@expo/vector-icons";
 import ActividadReciente from "../components/ActividadReciente";
@@ -39,24 +40,12 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
     <Layout>
       <View className="flex-1 bg-white">
 
-        {/* HEADER */}
-        <View className="flex-row items-center justify-center px-6 py-5 bg-suave border-b border-graySoft shadow-sm">
-          <TouchableOpacity
-            onPress={toggleDrawer}
-            className="absolute left-6 p-2 rounded-xl active:bg-gray-200"
-          >
-            <Ionicons name="menu-sharp" size={38} color="#374151" />
-          </TouchableOpacity>
+        <HeaderGlobal
+          titulo="Inicio"
+          subtitulo="Resumen general de tu actividad"
+          toggleDrawer={toggleDrawer}
+        />
 
-          <View className="flex-1 items-center">
-            <Text className="text-h2 font-semibold text-textPrimary">Inicio</Text>
-            <Text className="text-textSecondary font-regular text-body-sm mt-1">
-              Resumen general de tu actividad
-            </Text>
-          </View>
-        </View>
-
-        {/* SCROLL CONTENT */}
         <ScrollView
           className="flex-1 bg-grayLight"
           showsVerticalScrollIndicator={false}

@@ -33,49 +33,37 @@ const Ventas = () => {
     cargarDatos(filtro);
   }, [filtro]);
 
+  // Estado de carga
   if (loading) {
     return (
       <Layout>
-        <View className="flex-1 bg-white">
-          {/* Header */}
-          <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
-            <View className="flex-1">
-              <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
-              <Text className="text-gray-500 text-center text-sm mt-1">
-                Reportes y estadísticas
-              </Text>
-            </View>
-          </View>
-          <View className="flex-1 items-center justify-center py-12">
-            <ActivityIndicator size="large" color="#2563EB" />
-            <Text className="text-gray-600 font-semibold mt-4 text-center">
-              Cargando información de ventas...
-            </Text>
-          </View>
+        <HeaderGlobal 
+          titulo="Ventas"
+          subtitulo="Reportes y estadísticas"
+        />
+        <View className="flex-1 items-center justify-center bg-white py-12">
+          <ActivityIndicator size="large" color="#2563EB" />
+          <Text className="text-gray-600 font-semibold mt-4 text-center">
+            Cargando información de ventas...
+          </Text>
         </View>
       </Layout>
     );
   }
 
+  // Estado sin datos
   if (!data) {
     return (
       <Layout>
-        <View className="flex-1 bg-white">
-          {/* Header */}
-          <View className="flex-row items-center px-6 py-5 bg-white border-b border-gray-100">
-            <View className="flex-1">
-              <Text className="text-2xl text-center font-semibold text-gray-900">Ventas</Text>
-              <Text className="text-gray-500 text-center text-sm mt-1">
-                Reportes y estadísticas
-              </Text>
-            </View>
-          </View>
-          <View className="flex-1 items-center justify-center py-12">
-            <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-            <Text className="text-gray-500 font-semibold mt-4 text-center">
-              No hay datos disponibles en este momento.
-            </Text>
-          </View>
+        <HeaderGlobal 
+          titulo="Ventas"
+          subtitulo="Reportes y estadísticas"
+        />
+        <View className="flex-1 items-center justify-center py-12">
+          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+          <Text className="text-gray-500 font-semibold mt-4 text-center">
+            No hay datos disponibles en este momento.
+          </Text>
         </View>
       </Layout>
     );
@@ -144,10 +132,10 @@ const Ventas = () => {
   return (
     <Layout>
       <View className="flex-1 bg-white">
-      <HeaderGlobal
-        titulo="Ventas"
-        subtitulo="Reportes y estadísticas"
-      />
+        <HeaderGlobal
+          titulo="Ventas"
+          subtitulo="Reportes y estadísticas"
+        />
         <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
           {/* === RESUMEN GENERAL === */}
           <View className="bg-white rounded-2xl p-5 mx-4 mt-4 shadow-sm border border-gray-200">
