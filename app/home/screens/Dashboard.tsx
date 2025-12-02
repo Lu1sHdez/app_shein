@@ -44,6 +44,7 @@ const Dashboard = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
           titulo="Inicio"
           subtitulo="Resumen general de tu actividad"
           toggleDrawer={toggleDrawer}
+          className="bg-blue-700 rounded-b-2xl"
         />
 
         <ScrollView

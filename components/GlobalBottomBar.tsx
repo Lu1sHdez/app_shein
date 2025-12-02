@@ -35,7 +35,7 @@ const GlobalBottomBar = () => {
       className="flex-1 items-center justify-center active:opacity-70"
     >
       <Ionicons name={icon} size={iconSize} color="#2563EB" />
-      <Text className={`${fontSize} font-regular text-grayDark mt-1`}>
+      <Text className={`${fontSize} font-regular text-black mt-1`}>
         {label}
       </Text>
     </TouchableOpacity>

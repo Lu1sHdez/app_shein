@@ -6,24 +6,49 @@ type HeaderGlobalProps = {
   titulo: string;
   subtitulo: string;
   toggleDrawer?: () => void;
+  className?: string;
 };
 
-const HeaderGlobal = ({ titulo, subtitulo, toggleDrawer }: HeaderGlobalProps) => {
+const HeaderGlobal = ({ titulo, subtitulo, toggleDrawer, className }: HeaderGlobalProps) => {
   return (
-    <View className="flex-row items-center px-6 py-4 bg-blue-200 shadow-lg rounded-b-2xl">
-      {/* Botón del menú */}
-      {toggleDrawer && (
-        <TouchableOpacity
-          onPress={toggleDrawer}
-          className="absolute left-4 p-3 rounded-lg bg-white shadow-md active:bg-gray-200"
-        >
-          <Ionicons name="menu-sharp" size={32} color="#374151" />
-        </TouchableOpacity>
-      )}
+    <View className={`px-6 pt-12 pb-6 shadow-md rounded-b-3xl bg-blue-700`}>
+      
+      <View className="flex-row items-center justify-between">
 
-      <View className="flex-1 items-center">
-        <Text className="text-3xl text-gray-900 font-semibold">{titulo}</Text>
-        <Text className="text-gray-500 font-light text-lg mt-1">{subtitulo}</Text>
+        {/* ICONO DEL MENÚ (izquierda) */}
+        {toggleDrawer ? (
+          <TouchableOpacity
+            onPress={toggleDrawer}
+            className="p-2 rounded-xl bg-white shadow-sm"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons name="menu-sharp" size={28} color="#374151" />
+          </TouchableOpacity>
+        ) : (
+          <View className="w-[40px]" />  // <-- para centrar el título
+        )}
+
+        {/* TÍTULOS CENTRADOS */}
+        <View className="flex-1 items-center">
+          <Text
+            className="text-2xl font-semibold text-white"
+            adjustsFontSizeToFit
+            numberOfLines={1}
+          >
+            {titulo}
+          </Text>
+
+          <Text
+            className="text-sm font-semibold text-white opacity-90 mt-1"
+            adjustsFontSizeToFit
+            numberOfLines={1}
+          >
+            {subtitulo}
+          </Text>
+        </View>
+
+        {/* ESPACIO DERECHO PARA CENTRAR */}
+        <View className="w-[40px]" />
       </View>
     </View>
   );
